@@ -9,6 +9,7 @@ Pre-trained models for Natural Languages (NL) like BERT and GPT have been recent
 
 ## Requirements
 * Pytorch==1.7.1
+* tensorboard==2.4.1
 * transformers==4.6.1
 * tree_sitter==0.2.2 
  
@@ -18,23 +19,26 @@ Pre-trained models for Natural Languages (NL) like BERT and GPT have been recent
 
 ## Fine-tuning
 Go to `sh` folder, you can use `run_exp.py` to run a broad set of experiments by simply passing the `model_tag`, `task`,  `sub_task`, and other hyper-parameters. 
-For example, if you want to run CodeT5-base on code summarization task for Ruby, you type the following command:
+For example, if you want to run CodeT5-base on code summarization task for Ruby, you can type the following command:
 ```
 python run_exp.py --model_tag codet5_base --task summarize --sub_task ruby
 ```
-Then it will save the models into `sh/saved_models`, the results to `sh/results`, the training curve to `sh/tensorboard`.
+Then it will save the fine-tuning checkpoints into `sh/saved_models`, the evaluation results to `sh/results`, the training curves to `sh/tensorboard`, which can be visualized using [tensorboard](https://pypi.org/project/tensorboard/).
 
-## File structure
+## File Structure
 ```
-├── CodeT5.png
-├── LICENSE.txt
+
+├── CODE_OF_CONDUCT.md
 ├── README.md
+├── SECURITY.md
+├── CodeT5.png
 ├── _utils.py
 ├── configs.py
 ├── models.py
 ├── run_clone.py
 ├── run_gen.py
 ├── utils.py
+├── LICENSE.txt
 ├── data
 │   ├── clone
 │   ├── concode
