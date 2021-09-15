@@ -7,6 +7,9 @@ Pre-trained models for Natural Languages (NL) like BERT and GPT have been recent
 
 ![CodeT5 framework](CodeT5.png)
 
+**Updates**
+- :white_check_mark: Integrated to [Huggingface Spaces](https://huggingface.co/spaces) with [Gradio](https://github.com/gradio-app/gradio). See [Gradio Web Demo](https://huggingface.co/spaces/akhaliq/codet5).
+
 ## Requirements
 * Pytorch==1.7.1
 * tensorboard==2.4.1
