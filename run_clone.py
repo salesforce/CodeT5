@@ -166,7 +166,7 @@ def main():
             # multi-gpu training
             model = torch.nn.DataParallel(model)
         if args.local_rank in [-1, 0] and args.data_num == -1:
-            summary_fn = './tensorboard/{}'.format('/'.join(args.output_dir.split('/')[1:]))
+            summary_fn = '{}/{}'.format(args.summary_dir, '/'.join(args.output_dir.split('/')[1:]))
             tb_writer = SummaryWriter(summary_fn)
 
         # Prepare training data loader
