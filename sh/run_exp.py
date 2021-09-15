@@ -4,10 +4,10 @@ import argparse
 
 
 def get_cmd(task, sub_task, model_tag, gpu, data_num, bs, lr, source_length, target_length, patience, epoch, warmup,
-            gpu_type,  res_fn):
-    cmd_str = 'bash exp_with_args.sh %s %s %s %d %d %d %d %d %d %d %d %d %s %s' % \
+            model_dir, summary_dir, res_fn):
+    cmd_str = 'bash exp_with_args.sh %s %s %s %d %d %d %d %d %d %d %d %d %s %s %s' % \
               (task, sub_task, model_tag, gpu, data_num, bs, lr, source_length, target_length, patience, epoch,
-               warmup, gpu_type,  res_fn)
+               warmup, model_dir, summary_dir, res_fn)
     return cmd_str
 
 
@@ -88,7 +88,8 @@ def run_one_exp(args):
     print('============================Start Running==========================')
     cmd_str = get_cmd(task=args.task, sub_task=args.sub_task, model_tag=args.model_tag, gpu=args.gpu,
                       data_num=args.data_num, bs=bs, lr=lr, source_length=src_len, target_length=trg_len,
-                      patience=patience, epoch=epoch, warmup=1000, gpu_type=args.gpu_type,
+                      patience=patience, epoch=epoch, warmup=1000,
+                      model_dir=args.model_dir, summary_dir=args.summary_dir,
                       res_fn='{}/{}_{}.txt'.format(args.res_dir, args.task, args.model_tag))
     print('%s\n' % cmd_str)
     os.system(cmd_str)
@@ -101,23 +102,23 @@ def get_sub_tasks(task):
         sub_tasks = ['java-cs', 'cs-java']
     elif task == 'refine':
         sub_tasks = ['small', 'medium']
-    else:
+    elif task in ['concode', 'defect', 'clone']:
         sub_tasks = ['none']
-
     return sub_tasks
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_tag", type=str, default='codet5_base',
-                        choices=['roberta', 'codebert', 'bart_base', 'codet5_small', 'codet5_base'])
+    parser.add_argument("--model_tag", type=str, default='codet5_small',
+                        choices=['roberta', 'codebert', 'codet5_small', 'codet5_base'])
     parser.add_argument("--task", type=str, default='summarize', choices=['summarize', 'concode', 'translate',
                                                                           'refine', 'defect', 'clone'])
     parser.add_argument("--sub_task", type=str, default='ruby')
-    parser.add_argument("--res_dir", type=str, default='results')
-    parser.add_argument("--gpu_type", type=str, default='a100', choices=['v100', 'a100'])
-    parser.add_argument("--data_num", type=int, default=-1)
-    parser.add_argument("--gpu", type=int, default=0)
+    parser.add_argument("--res_dir", type=str, default='results', help='directory to save fine-tuning results')
+    parser.add_argument("--model_dir", type=str, default='saved_models', help='directory to save fine-tuned models')
+    parser.add_argument("--summary_dir", type=str, default='tensorboard', help='directory to save tensorboard summary')
+    parser.add_argument("--data_num", type=int, default=-1, help='number of data instances to use, -1 for full data')
+    parser.add_argument("--gpu", type=int, default=0, help='index of the gpu to use in a cluster')
     args = parser.parse_args()
 
     if not os.path.exists(args.res_dir):
