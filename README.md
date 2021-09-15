@@ -1,5 +1,5 @@
 # CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation
-This is the official PyTorch implementation for the following paper at EMNLP 2021 from Salesforce Research: \
+This is the official PyTorch implementation for the following EMNLP 2021 paper from Salesforce Research: \
 **Title**: [CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation](https://arxiv.org/pdf/2109.00859.pdf) [[blog]](https://blog.einstein.ai/codet5/) \
 **Authors**: Yue Wang, Weishi Wang, Shafiq Joty, Steven C.H. Hoi \
 **Abstract**: 
@@ -11,23 +11,13 @@ Pre-trained models for Natural Languages (NL) like BERT and GPT have been recent
 * Pytorch==1.7.1
 * tensorboard==2.4.1
 * transformers==4.6.1
-* tree_sitter==0.2.2 
+* tree-sitter==0.2.2 
  
 ## Download 
-* [Pre-trained checkpoint](https://drive.google.com/drive/folders/1djlsk7ED8agTyWUe0aWeAbxIR5pzSvVo?usp=sharing)
-* [Fine-tuning data](https://drive.google.com/drive/folders/1gcsiAg-SzPmPRcl3nxc4yA79nqcbnKIy?usp=sharing)
-
-## Fine-tuning
-Go to `sh` folder, you can use `run_exp.py` to run a broad set of experiments by simply passing the `model_tag`, `task`,  `sub_task`, and other hyper-parameters. 
-For example, if you want to run CodeT5-base on code summarization task for Ruby, you can type the following command:
-```
-python run_exp.py --model_tag codet5_base --task summarize --sub_task ruby
-```
-Then it will save the fine-tuning checkpoints into `sh/saved_models`, the evaluation results to `sh/results`, the training curves to `sh/tensorboard`, which can be visualized using [tensorboard](https://pypi.org/project/tensorboard/).
+* [Pre-trained checkpoints & Fine-tuning data](https://console.cloud.google.com/storage/browser/sfr-codet5-data-research)
 
 ## File Structure
 ```
-
 ├── CODE_OF_CONDUCT.md
 ├── README.md
 ├── SECURITY.md
@@ -55,11 +45,12 @@ Then it will save the fine-tuning checkpoints into `sh/saved_models`, the evalua
 │   │   └── ruby
 │   └── translate
 ├── evaluator
-│   ├── CodeBLEU
-│   │   ├── keywords
-│   │   └── parser
+│   ├── bleu.py
+│   ├── smooth_bleu.py
+│   └── CodeBLEU
 ├── pretrained_models
 │   └── codet5_base
+│   └── codet5_small
 ├── sh
 │   ├── exp_with_args.sh
 │   ├── run_exp.py
@@ -71,6 +62,28 @@ Then it will save the fine-tuning checkpoints into `sh/saved_models`, the evalua
         ├── codet5-merges.txt
         └── codet5-vocab.json    
 ```
+
+## Fine-tuning
+Go to `sh` folder, set the `WORKDIR` in `exp_with_args.sh` to be your downloaded CodeT5 repository path.
+ 
+You can use `run_exp.py` to run a broad set of experiments by simply passing the `model_tag`, `task`, and `sub_task` arguments. 
+In total, we support four models (i.e., ['roberta', 'codebert', 'codet5_small', 'codet5_base']) and six tasks (i.e., ['summarize', 'concode', 'translate', 'refine', 'defect', 'clone']). 
+For each task, we use the `sub_task` to specify which specific datasets to fine-tine on.
+ 
+For example, if you want to run CodeT5-base on the code summarization task for Ruby, you can type the following command:
+```
+python run_exp.py --model_tag codet5_base --task summarize --sub_task ruby
+```
+
+Besides, you can specify:
+```
+model_dir: where to save fine-tuning checkpoints
+res_dir: where to save the performance results 
+summary_dir: where to save the training curves
+data_num: how many data instances to use, the default -1 is for using the full data
+gpu: the index of the GPU to use in the cluster
+``` 
+You can also directly revise the suggested arguments in the `get_args_by_task_model` function of `run_exp.py`. The saved training curves in `summary_dir` can be visualized using [tensorboard](https://pypi.org/project/tensorboard/).
 
 ## Citation
 If you find this code to be useful for your research, please consider citing.
