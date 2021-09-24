@@ -31,17 +31,17 @@ print(tokenizer.decode(generated_ids[0], skip_special_tokens=True))
 
 ## Introduction
 This repo provides the code for reproducing the experiments in [CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation](https://arxiv.org/pdf/2109.00859.pdf). 
-CodeT5 is a new pre-trained encoder-decoder model for programming languages, which is pre-trained on 8.35M functions in 8 programming languages (Python, Java, JavaScript, PHP, Ruby, Go, C, and C#). 
-In total, it achieves state-of-the-art results on 14 sub-tasks in a code intelligence benchmark - [CodeXGLUE](https://github.com/microsoft/CodeXGLUE). 
+CodeT5 is a new pre-trained encoder-decoder model for programming languages, which is pre-trained on **8.35M** functions in 8 programming languages (Python, Java, JavaScript, PHP, Ruby, Go, C, and C#). 
+In total, it achieves state-of-the-art results on **14 sub-tasks** in a code intelligence benchmark - [CodeXGLUE](https://github.com/microsoft/CodeXGLUE). 
 
 Paper link: https://arxiv.org/abs/2109.00859
 
 Blog link: https://blog.einstein.ai/codet5/
 
-The code currently include two pre-trained checkpoints ([CodeT5-small](https://huggingface.co/Salesforce/codet5-small) and [CodeT5-base](https://huggingface.co/Salesforce/codet5-base)) and scripts to fine-tine them on 4 generation tasks (code summarization, code generation, translation, and refinement) plus 2 understanding tasks (code defect detection and clone detection) in CodeXGLUE.
+The code currently includes two pre-trained checkpoints ([CodeT5-small](https://huggingface.co/Salesforce/codet5-small) and [CodeT5-base](https://huggingface.co/Salesforce/codet5-base)) and scripts to fine-tine them on 4 generation tasks (code summarization, code generation, translation, and refinement) plus 2 understanding tasks (code defect detection and clone detection) in CodeXGLUE.
 
 In practice, CodeT5 can be deployed as an AI-powered coding assistant to boost the productivity of software developers. 
-At Salesforce, we build an [AI coding assistant demo](https://github.com/salesforce/CodeT5/raw/main/codet5.gif) using CodeT5 to provide three capabilities for Apex developers as a VS Code plugin:
+At Salesforce, we build an [AI coding assistant demo](https://github.com/salesforce/CodeT5/raw/main/codet5.gif) using CodeT5 as a VS Code plugin to provide three capabilities for Apex developers:
 
 - **Text-to-code generation**: generate code based on the natural language description.
 - **Code autocompletion**: complete the whole function of code given the target function name.
@@ -59,11 +59,12 @@ At Salesforce, we build an [AI coding assistant demo](https://github.com/salesfo
 ## Citation
 If you find this code to be useful for your research, please consider citing.
 ```
-@article{CodeT5,
-      title={CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation}, 
-      author={Yue Wang, Weishi Wang, Shafiq Joty, Steven C.H. Hoi},
-      year={2021},
-      journal={arXiv preprint arXiv:2109.00859},
+@inproceedings{
+    wang2021codet5,
+    title={CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation}, 
+    author={Yue Wang, Weishi Wang, Shafiq Joty, Steven C.H. Hoi},
+    booktitle={Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing, EMNLP 2021},
+    year={2021},
 }
 ```
 
@@ -91,7 +92,7 @@ We encourage users of this software to tell us about the applications in which t
 ## Download 
 * [Pre-trained checkpoints & Fine-tuning data](https://console.cloud.google.com/storage/browser/sfr-codet5-data-research)
 
-Instructions for download:
+Instructions to download:
 ```
 pip install gsutil
 
@@ -101,7 +102,7 @@ gsutil -m cp -r \
   .
 ```
 
-The repository structure is shown in the following after download:
+The repository structure will look like the following after the download:
 ```
 ├── CODE_OF_CONDUCT.md
 ├── README.md
@@ -168,8 +169,7 @@ summary_dir: where to save the training curves
 data_num: how many data instances to use, the default -1 is for using the full data
 gpu: the index of the GPU to use in the cluster
 ``` 
-You can also directly revise the suggested arguments in the [get_args_by_task_model](https://github.com/salesforce/CodeT5/blob/4f8818aea1bf170f019381671087e4c4f9608005/sh/run_exp.py#L14) function. 
-Please refer to the argument flags in `configs.py` for the full available options.
+You can also revise the suggested arguments [here](https://github.com/salesforce/CodeT5/blob/4f8818aea1bf170f019381671087e4c4f9608005/sh/run_exp.py#L14) and refer to the argument flags in [configs.py](https://github.com/salesforce/CodeT5/blob/main/configs.py) for the full available options.
 The saved training curves in `summary_dir` can be visualized using [tensorboard](https://pypi.org/project/tensorboard/).
 
 ## Get Involved
