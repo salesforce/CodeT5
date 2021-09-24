@@ -17,10 +17,10 @@ MODEL_CLASSES = {'roberta': (RobertaConfig, RobertaModel, RobertaTokenizer),
 
 
 def load_codet5(config, model, tokenizer_class, load_extra_ids=True, add_lang_ids=False,
-                tokenizer_path='/export/share/wang.y/workspace/CodeT5Full/tokenizer/salesforce'):
+                tokenizer_path='CodeT5/tokenizer/salesforce'):
     vocab_fn = '{}/codet5-vocab.json'.format(tokenizer_path)
     merge_fn = '{}/codet5-merges.txt'.format(tokenizer_path)
-    tokenizer = tokenizer_class(vocab_fn, merge_fn)
+    tokenizer = tokenizer_class(vocab_fn, merge_fn, model_max_length=512)
 
     tokenizer.add_special_tokens(
         {'additional_special_tokens': [
@@ -36,15 +36,13 @@ def load_codet5(config, model, tokenizer_class, load_extra_ids=True, add_lang_id
     if add_lang_ids:
         tokenizer.add_special_tokens({'additional_special_tokens': ['<en>', '<python>', '<java>', '<javascript>',
                                                                     '<ruby>', '<php>', '<go>', '<c>', '<c_sharp>']})
-    # pdb.set_trace()
-    tokenizer.model_max_len = 512
     config.num_labels = 1
     config.vocab_size = len(tokenizer)
     config.pad_token_id = 0
     config.bos_token_id = 1
     config.eos_token_id = 2
 
-    model.config = config  # changing the default eos_token_id from 1 to 2
+    model.config = config  # changing the default config of T5
     model.resize_token_embeddings(len(tokenizer))
     return config, model, tokenizer
 
