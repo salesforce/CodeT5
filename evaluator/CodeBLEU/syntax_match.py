@@ -7,8 +7,9 @@ from evaluator.CodeBLEU.parser import (remove_comments_and_docstrings,
                                        index_to_code_token,
                                        tree_to_variable_index)
 from tree_sitter import Language, Parser
+import os
 
-parser_path = '/export/share/wang.y/workspace/CodeT5Full/finetune/evaluator/CodeBLEU/parser'
+root_dir = os.path.dirname(__file__)
 dfg_function = {
     'python': DFG_python,
     'java': DFG_java,
@@ -25,7 +26,7 @@ def calc_syntax_match(references, candidate, lang):
 
 
 def corpus_syntax_match(references, candidates, lang):
-    JAVA_LANGUAGE = Language('{}/my-languages.so'.format(parser_path), lang)
+    JAVA_LANGUAGE = Language(root_dir + '/parser/my-languages.so', lang)
     parser = Parser()
     parser.set_language(JAVA_LANGUAGE)
     match_count = 0

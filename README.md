@@ -91,14 +91,19 @@ We encourage users of this software to tell us about the applications in which t
  
 ## Download 
 * [Pre-trained checkpoints & Fine-tuning data](https://console.cloud.google.com/storage/browser/sfr-codet5-data-research)
+* Fine-tuned checkpoints (TBA)
+* Extra C/C# pre-training data (TBA)
 
 Instructions to download:
 ```
 pip install gsutil
 
+gsutil -m cp -r "gs://sfr-codet5-data-research/data/" .
+
+mkdir pretrained_models; cd pretrained_models
 gsutil -m cp -r \
-  "gs://sfr-codet5-data-research/data/" \
-  "gs://sfr-codet5-data-research/pretrained_models/" \
+  "gs://sfr-codet5-data-research/pretrained_models/codet5_small" \
+  "gs://sfr-codet5-data-research/pretrained_models/codet5_base" \
   .
 ```
 

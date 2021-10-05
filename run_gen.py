@@ -28,8 +28,6 @@ import numpy as np
 from tqdm import tqdm
 import multiprocessing
 import time
-import sys
-import pdb
 
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
@@ -112,7 +110,7 @@ def eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, split_tag,
                                        max_length=args.max_target_length)
                 top_preds = list(preds.cpu().numpy())
             pred_ids.extend(top_preds)
-    # pdb.set_trace()
+
     pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
 
     output_fn = os.path.join(args.res_dir, "test_{}.output".format(criteria))
@@ -146,20 +144,17 @@ def eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, split_tag,
                     f1.write(gold.target.strip() + '\n')
                     f2.write(gold.source.strip() + '\n')
 
-        if args.task in ['summarize']:
+        if args.task == 'summarize':
             (goldMap, predictionMap) = smooth_bleu.computeMaps(predictions, gold_fn)
             bleu = round(smooth_bleu.bleuFromMaps(goldMap, predictionMap)[0], 2)
         else:
             bleu = round(_bleu(gold_fn, output_fn), 2)
-            if split_tag == 'test' and args.task in ['refine', 'translate', 'concode']:
+            if args.task == 'concode':
                 codebleu = calc_code_bleu.get_codebleu(gold_fn, output_fn, args.lang)
-        # except:
-        #     bleu = 0.0
-        #     codebleu = 0.0
 
         em = np.mean(dev_accs) * 100
         result = {'em': em, 'bleu': bleu}
-        if not args.task == 'summarize' and split_tag == 'test':
+        if args.task == 'concode':
             result['codebleu'] = codebleu * 100
 
     logger.info("***** Eval results *****")
@@ -364,7 +359,7 @@ def main():
         logger.info("  " + "***** Testing *****")
         logger.info("  Batch size = %d", args.eval_batch_size)
 
-        for criteria in ['best-bleu', 'best-ppl']:  # 'best-bleu', 'best-ppl', 'last'
+        for criteria in ['best-bleu', 'best-ppl']:
             file = os.path.join(args.output_dir, 'checkpoint-{}/pytorch_model.bin'.format(criteria))
             logger.info("Reload model from {}".format(file))
             model.load_state_dict(torch.load(file))
@@ -386,5 +381,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # print(' '.join(sys.argv[:]))
     main()

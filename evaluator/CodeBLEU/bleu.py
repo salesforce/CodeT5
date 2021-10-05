@@ -16,7 +16,6 @@ import warnings
 from collections import Counter
 
 from evaluator.CodeBLEU.utils import ngrams
-import pdb
 
 
 def sentence_bleu(
