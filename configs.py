@@ -13,7 +13,7 @@ def add_args(parser):
     parser.add_argument("--sub_task", type=str, default='')
     parser.add_argument("--lang", type=str, default='')
     parser.add_argument("--eval_task", type=str, default='')
-    parser.add_argument("--model_type", default="roberta", type=str, choices=['roberta', 't5', 'bart', 'codet5'])
+    parser.add_argument("--model_type", default="codet5", type=str, choices=['roberta', 'bart', 'codet5'])
     parser.add_argument("--add_lang_ids", action='store_true')
     parser.add_argument("--data_num", default=-1, type=int)
     parser.add_argument("--start_epoch", default=0, type=int)
@@ -98,7 +98,7 @@ def add_args(parser):
     parser.add_argument("--local_rank", type=int, default=-1,
                         help="For distributed training: local_rank")
     parser.add_argument('--seed', type=int, default=1234,
-                        help="random seed for initialization")  # previous one 42
+                        help="random seed for initialization") 
     args = parser.parse_args()
 
     if args.task in ['summarize']:
