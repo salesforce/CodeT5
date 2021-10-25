@@ -8,6 +8,52 @@ This is the official PyTorch implementation for the following EMNLP 2021 paper f
 ![CodeT5 demo](codet5.gif)
 
 ## Updates
+**Oct 25, 2021**
+
+We release a CodeT5-base fine-tuned checkpoint ([Salesforce/codet5-base-multi-sum](https://huggingface.co/Salesforce/codet5-base-multi-sum)) for multi-lingual code summarzation. Below is how to use this model:
+
+```python
+from transformers import RobertaTokenizer, T5ForConditionalGeneration
+
+if __name__ == '__main__':
+    tokenizer = RobertaTokenizer.from_pretrained('Salesforce/codet5-base')
+    model = T5ForConditionalGeneration.from_pretrained('Salesforce/codet5-base-multi-sum')
+
+    text = """def svg_to_image(string, size=None):
+    if isinstance(string, unicode):
+        string = string.encode('utf-8')
+        renderer = QtSvg.QSvgRenderer(QtCore.QByteArray(string))
+    if not renderer.isValid():
+        raise ValueError('Invalid SVG data.')
+    if size is None:
+        size = renderer.defaultSize()
+        image = QtGui.QImage(size, QtGui.QImage.Format_ARGB32)
+        painter = QtGui.QPainter(image)
+        renderer.render(painter)
+    return image"""
+
+    input_ids = tokenizer(text, return_tensors="pt").input_ids
+
+    generated_ids = model.generate(input_ids, max_length=20)
+    print(tokenizer.decode(generated_ids[0], skip_special_tokens=True))
+    # this prints: "Convert a SVG string to a QImage."
+```
+
+It significantly outperforms previous methods on code summarization in the [CodeXGLUE benchmark](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Text/code-to-text):
+| Model       |   Ruby    | Javascript |    Go     |  Python   |   Java    |    PHP    |  Overall  |
+| ----------- | :-------: | :--------: | :-------: | :-------: | :-------: | :-------: | :-------: |
+| Seq2Seq     |   9.64    |   10.21    |   13.98   |   15.93   |   15.09   |   21.08   |   14.32   |
+| Transformer |   11.18   |   11.59    |   16.38   |   15.81   |   16.26   |   22.12   |   15.56   |
+| [RoBERTa](https://arxiv.org/pdf/1907.11692.pdf)     |   11.17   |   11.90    |   17.72   |   18.14   |   16.47   |   24.02   |   16.57   |
+| [CodeBERT](https://arxiv.org/pdf/2002.08155.pdf)    | 12.16 | 14.90  | 18.07 | 19.06 | 17.65 | 25.16 | 17.83 |
+| [PLBART](https://aclanthology.org/2021.naacl-main.211.pdf)    | 14.11 |15.56  |  18.91 |   19.30 |  18.45 |  23.58 |  18.32 | 
+| [CodeT5-base-multi-sum](https://arxiv.org/abs/2109.00859)    | **15.24**   | **16.18**       | **19.95**   |    **20.42**       | **20.26**   |    **26.10**   |    **19.69** | 
+
+
+**Oct 18, 2021**
+
+We add a [model card](https://github.com/salesforce/CodeT5/blob/main/CodeT5_model_card.pdf) for CodeT5! Please reach out if you have any questions about it.
+
 **Sep 24, 2021**
 
 CodeT5 is now in [hugginface](https://huggingface.co/)!
