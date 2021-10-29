@@ -47,26 +47,32 @@ elif [[ $MODEL_TAG == codebert ]]; then
   MODEL_TYPE=roberta
   TOKENIZER=roberta-base
   MODEL_PATH=microsoft/codebert-base
+elif [[ $MODEL_TAG == bart_base ]]; then
+  MODEL_TYPE=bart
+  TOKENIZER=facebook/bart-base
+  MODEL_PATH=facebook/bart-base
 elif [[ $MODEL_TAG == codet5_small ]]; then
   MODEL_TYPE=codet5
-  TOKENIZER=roberta-base
-  MODEL_PATH=${WORKDIR}/pretrained_models/codet5_small
+  TOKENIZER=Salesforce/codet5-small
+  MODEL_PATH=Salesforce/codet5-small
 elif [[ $MODEL_TAG == codet5_base ]]; then
   MODEL_TYPE=codet5
-  TOKENIZER=roberta-base
-  MODEL_PATH=${WORKDIR}/pretrained_models/codet5_base
+  TOKENIZER=Salesforce/codet5-base
+  MODEL_PATH=Salesforce/codet5-base
 fi
 
 if [[ ${TASK} == 'clone' ]]; then
   RUN_FN=${WORKDIR}/run_clone.py
+elif [[ ${TASK} == 'defect' ]] && [[ ${MODEL_TYPE} == 'roberta' ||  ${MODEL_TYPE} == 'bart' ]]; then
+  RUN_FN=${WORKDIR}/run_defect.py
 else
   RUN_FN=${WORKDIR}/run_gen.py
 fi
 
 
 CUDA_VISIBLE_DEVICES=${GPU} \
-  python ${RUN_FN} ${MULTI_TASK_AUG} \
-  --do_test --do_train --do_eval --do_eval_bleu --save_last_checkpoints --always_save_model \
+  python ${RUN_FN}  \
+  --do_train --do_eval --do_eval_bleu --do_test  --save_last_checkpoints --always_save_model \
   --task ${TASK} --sub_task ${SUB_TASK} --model_type ${MODEL_TYPE} --data_num ${DATA_NUM}  \
   --num_train_epochs ${EPOCH} --warmup_steps ${WARMUP} --learning_rate ${LR}e-5 --patience ${PATIENCE} \
   --tokenizer_name=${TOKENIZER} --tokenizer_path=${WORKDIR}/tokenizer/salesforce \

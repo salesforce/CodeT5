@@ -66,10 +66,20 @@ def convert_clone_examples_to_features(item):
     else:
         source_str = example.source
         target_str = example.target
-    code1 = tokenizer.encode(source_str, max_length=args.block_size, padding='max_length', truncation=True)
-    code2 = tokenizer.encode(target_str, max_length=args.block_size, padding='max_length', truncation=True)
+    code1 = tokenizer.encode(source_str, max_length=args.max_source_length, padding='max_length', truncation=True)
+    code2 = tokenizer.encode(target_str, max_length=args.max_source_length, padding='max_length', truncation=True)
     source_ids = code1 + code2
     return CloneInputFeatures(example_index, source_ids, example.label, example.url1, example.url2)
+
+
+def convert_defect_examples_to_features(item):
+    example, example_index, tokenizer, args = item
+    if args.model_type in ['t5', 'codet5'] and args.add_task_prefix:
+        source_str = "{}: {}".format(args.task, example.source)
+    else:
+        source_str = example.source
+    code = tokenizer.encode(source_str, max_length=args.max_source_length, padding='max_length', truncation=True)
+    return DefectInputFeatures(example_index, code, example.target)
 
 
 class CloneInputFeatures(object):
@@ -87,6 +97,19 @@ class CloneInputFeatures(object):
         self.label = label
         self.url1 = url1
         self.url2 = url2
+
+
+class DefectInputFeatures(object):
+    """A single training/test features for a example."""
+
+    def __init__(self,
+                 example_id,
+                 source_ids,
+                 label
+                 ):
+        self.example_id = example_id
+        self.source_ids = source_ids
+        self.label = label
 
 
 class InputFeatures(object):

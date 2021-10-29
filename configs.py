@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def add_args(parser):
     parser.add_argument("--task", type=str, required=True,
-                        choices=['summarize', 'refine', 'translate', 'concode', 'clone', 'defect'])
+                        choices=['summarize', 'concode', 'translate', 'refine', 'defect', 'clone'])
     parser.add_argument("--sub_task", type=str, default='')
     parser.add_argument("--lang", type=str, default='')
     parser.add_argument("--eval_task", type=str, default='')
@@ -49,7 +49,6 @@ def add_args(parser):
                         help="Pretrained config name or path if not the same as model_name")
     parser.add_argument("--tokenizer_name", default="roberta-base", type=str,
                         help="Pretrained tokenizer name or path if not the same as model_name")
-    parser.add_argument("--block_size", default=512, type=int)
     parser.add_argument("--max_source_length", default=64, type=int,
                         help="The maximum total source sequence length after tokenization. Sequences longer "
                              "than this will be truncated, sequences shorter will be padded.")
@@ -98,7 +97,7 @@ def add_args(parser):
     parser.add_argument("--local_rank", type=int, default=-1,
                         help="For distributed training: local_rank")
     parser.add_argument('--seed', type=int, default=1234,
-                        help="random seed for initialization") 
+                        help="random seed for initialization")
     args = parser.parse_args()
 
     if args.task in ['summarize']:

@@ -20,7 +20,6 @@ using a masked language modeling (MLM) loss.
 """
 
 import os
-import torch
 import logging
 import argparse
 import math
@@ -29,6 +28,7 @@ from tqdm import tqdm
 import multiprocessing
 import time
 
+import torch
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
@@ -121,7 +121,7 @@ def eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, split_tag,
         target_dict = {0: 'false', 1: 'true'}
         golds = [target_dict[ex.target] for ex in eval_examples]
         eval_acc = np.mean([int(p == g) for p, g in zip(pred_nls, golds)])
-        result = {'em': eval_acc, 'bleu': 0, 'codebleu': 0}
+        result = {'em': eval_acc * 100, 'bleu': 0, 'codebleu': 0}
 
         with open(output_fn, 'w') as f, open(gold_fn, 'w') as f1, open(src_fn, 'w') as f2:
             for pred_nl, gold in zip(pred_nls, eval_examples):
@@ -149,11 +149,10 @@ def eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, split_tag,
             bleu = round(smooth_bleu.bleuFromMaps(goldMap, predictionMap)[0], 2)
         else:
             bleu = round(_bleu(gold_fn, output_fn), 2)
-            if args.task == 'concode':
+            if args.task in ['concode', 'translate', 'refine']:
                 codebleu = calc_code_bleu.get_codebleu(gold_fn, output_fn, args.lang)
 
-        em = np.mean(dev_accs) * 100
-        result = {'em': em, 'bleu': bleu}
+        result = {'em': np.mean(dev_accs) * 100, 'bleu': bleu}
         if args.task == 'concode':
             result['codebleu'] = codebleu * 100
 
@@ -342,6 +341,9 @@ def main():
                     else:
                         not_bleu_em_inc_cnt += 1
                         logger.info("Bleu does not increase for %d epochs", not_bleu_em_inc_cnt)
+                        fa.write(
+                            "[%d] Best bleu+em (%.2f) does not drop changed for %d epochs, cur bleu+em: %.2f (bleu: %.2f, em: %.2f)\n" % (
+                                cur_epoch, best_bleu_em, not_bleu_em_inc_cnt, dev_bleu_em, dev_bleu, dev_em))
                         if all([x > args.patience for x in [not_bleu_em_inc_cnt, not_loss_dec_cnt]]):
                             stop_early_str = "[%d] Early stop as not_bleu_em_inc_cnt=%d, and not_loss_dec_cnt=%d\n" % (
                                 cur_epoch, not_bleu_em_inc_cnt, not_loss_dec_cnt)
@@ -359,7 +361,7 @@ def main():
         logger.info("  " + "***** Testing *****")
         logger.info("  Batch size = %d", args.eval_batch_size)
 
-        for criteria in ['best-bleu', 'best-ppl']:
+        for criteria in ['best-bleu']:
             file = os.path.join(args.output_dir, 'checkpoint-{}/pytorch_model.bin'.format(criteria))
             logger.info("Reload model from {}".format(file))
             model.load_state_dict(torch.load(file))

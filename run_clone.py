@@ -21,21 +21,16 @@ using a masked language modeling (MLM) loss.
 
 from __future__ import absolute_import
 import os
-from models import CloneModel as Model
-import torch
+from models import CloneModel
 import logging
 import argparse
 import math
 import numpy as np
 from io import open
 from tqdm import tqdm
-
-try:
-    from torch.utils.tensorboard import SummaryWriter
-except:
-    from tensorboardX import SummaryWriter
-
-from torch.utils.data import DataLoader,  SequentialSampler, RandomSampler
+import torch
+from torch.utils.tensorboard import SummaryWriter
+from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 from transformers import (AdamW, get_linear_schedule_with_warmup,
                           RobertaConfig, RobertaModel, RobertaTokenizer,
@@ -47,7 +42,7 @@ import time
 
 from configs import add_args, set_seed
 from utils import get_filenames, get_elapse_time, load_and_cache_clone_data
-from models import get_model_size, load_codet5
+from models import get_model_size
 
 MODEL_CLASSES = {'roberta': (RobertaConfig, RobertaModel, RobertaTokenizer),
                  't5': (T5Config, T5ForConditionalGeneration, T5Tokenizer),
@@ -89,9 +84,9 @@ def evaluate(args, model, eval_examples, eval_data, write_to_pred=False):
     best_threshold = 0.5
 
     y_preds = logits[:, 1] > best_threshold
-    recall = recall_score(y_trues, y_preds, average='macro')
-    precision = precision_score(y_trues, y_preds, average='macro')
-    f1 = f1_score(y_trues, y_preds, average='macro')
+    recall = recall_score(y_trues, y_preds)
+    precision = precision_score(y_trues, y_preds)
+    f1 = f1_score(y_trues, y_preds)
     result = {
         "eval_recall": float(recall),
         "eval_precision": float(precision),
@@ -140,15 +135,9 @@ def main():
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path)
     model = model_class.from_pretrained(args.model_name_or_path)
+    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name)
 
-    if args.model_type == 'codet5':
-        # reset special ids: pad_token_id = 0, bos_token_id = 1, eos_token_id = 2
-        config, model, tokenizer = load_codet5(config, model, tokenizer_class,
-                                               tokenizer_path=args.tokenizer_path)
-    else:
-        tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name)
-
-    model = Model(model, config, tokenizer, args)
+    model = CloneModel(model, config, tokenizer, args)
     logger.info("Finish loading model [%s] from %s", get_model_size(model), args.model_name_or_path)
 
     if args.load_model_path is not None:
@@ -179,7 +168,7 @@ def main():
         train_dataloader = DataLoader(train_data, sampler=train_sampler, batch_size=args.train_batch_size)
 
         num_train_optimization_steps = args.num_train_epochs * len(train_dataloader)
-        save_steps = max(len(train_dataloader) // 10, 1)
+        save_steps = max(len(train_dataloader) // 5, 1)
 
         # Prepare optimizer and schedule (linear warmup and decay)
         no_decay = ['bias', 'LayerNorm.weight']
@@ -301,9 +290,8 @@ def main():
         logger.info("  " + "***** Testing *****")
         logger.info("  Batch size = %d", args.eval_batch_size)
 
-        for criteria in ['best-f1']:  # , 'last'
+        for criteria in ['best-f1']:
             file = os.path.join(args.output_dir, 'checkpoint-{}/pytorch_model.bin'.format(criteria))
-            # logger.info("*" * 10 + "Start testing" + "*" * 10)
             logger.info("Reload model from {}".format(file))
             model.load_state_dict(torch.load(file))
 

@@ -21,20 +21,14 @@ using a masked language modeling (MLM) loss.
 
 from __future__ import absolute_import
 import os
-import sys
-import torch
 import logging
 import argparse
 import math
 import numpy as np
 from io import open
 from tqdm import tqdm
-
-try:
-    from torch.utils.tensorboard import SummaryWriter
-except:
-    from tensorboardX import SummaryWriter
-
+import torch
+from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader, Dataset, SequentialSampler, RandomSampler, TensorDataset
 from torch.utils.data.distributed import DistributedSampler
 from transformers import (WEIGHTS_NAME, AdamW, get_linear_schedule_with_warmup,
@@ -42,13 +36,12 @@ from transformers import (WEIGHTS_NAME, AdamW, get_linear_schedule_with_warmup,
                           BartConfig, BartForConditionalGeneration, BartTokenizer,
                           T5Config, T5ForConditionalGeneration, T5Tokenizer)
 import multiprocessing
-import pdb
 import time
 
 from models import DefectModel
 from configs import add_args, set_seed
 from utils import get_filenames, get_elapse_time, load_and_cache_defect_data
-from models import get_model_size, load_codet5
+from models import get_model_size
 
 MODEL_CLASSES = {'roberta': (RobertaConfig, RobertaModel, RobertaTokenizer),
                  't5': (T5Config, T5ForConditionalGeneration, T5Tokenizer),
@@ -138,14 +131,7 @@ def main():
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path)
     model = model_class.from_pretrained(args.model_name_or_path)
-
-    if args.model_type == 'codet5':
-        # reset special ids: pad_token_id = 0, bos_token_id = 1, eos_token_id = 2
-        config, model, tokenizer = load_codet5(config, model, tokenizer_class,
-                                               load_extra_ids=False, add_lang_ids=False,
-                                               tokenizer_path=args.tokenizer_path)
-    else:
-        tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name)
+    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name)
 
     model = DefectModel(model, config, tokenizer, args)
     logger.info("Finish loading model [%s] from %s", get_model_size(model), args.model_name_or_path)
@@ -214,7 +200,6 @@ def main():
             for step, batch in enumerate(bar):
                 batch = tuple(t.to(device) for t in batch)
                 source_ids, labels = batch
-                # pdb.set_trace()
 
                 loss, logits = model(source_ids, labels)
 
@@ -300,9 +285,8 @@ def main():
         logger.info("  " + "***** Testing *****")
         logger.info("  Batch size = %d", args.eval_batch_size)
 
-        for criteria in ['best-acc']:  # , 'last'
+        for criteria in ['best-acc']:
             file = os.path.join(args.output_dir, 'checkpoint-{}/pytorch_model.bin'.format(criteria))
-            # logger.info("*" * 10 + "Start testing" + "*" * 10)
             logger.info("Reload model from {}".format(file))
             model.load_state_dict(torch.load(file))
 
@@ -327,5 +311,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # print(' '.join(sys.argv[1:]))
     main()
