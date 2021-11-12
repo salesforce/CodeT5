@@ -64,7 +64,6 @@ def load_and_cache_clone_data(args, filename, pool, tokenizer, split_tag, is_sam
             logger.info("Create cache data into %s", cache_fn)
         tuple_examples = [(example, idx, tokenizer, args) for idx, example in enumerate(examples)]
         features = pool.map(convert_clone_examples_to_features, tqdm(tuple_examples, total=len(tuple_examples)))
-        # features = [convert_clone_examples_to_features(x) for x in tuple_examples]
         all_source_ids = torch.tensor([f.source_ids for f in features], dtype=torch.long)
         all_labels = torch.tensor([f.label for f in features], dtype=torch.long)
         data = TensorDataset(all_source_ids, all_labels)
@@ -149,7 +148,7 @@ def get_filenames(data_root, task, sub_task, split=''):
 
 def read_examples(filename, data_num, task):
     read_example_dict = {
-        'summarize': read_summarize_examples,  # read_summarize_examples， read_summarize_indent_examples
+        'summarize': read_summarize_examples, 
         'refine': read_refine_examples,
         'translate': read_translate_examples,
         'concode': read_concode_examples,
