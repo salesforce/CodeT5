@@ -285,9 +285,6 @@ def read_clone_examples(filename, data_num):
             line = line.strip()
             js = json.loads(line)
             code = ' '.join(js['func'].split())
-            # code_tokens, dfg = extract_dataflow(js['func'], parsers['java'], 'java')
-            # code = ' '.join(code_tokens)
-            # pdb.set_trace()
             url_to_code[js['idx']] = code
 
     data = []
