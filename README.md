@@ -87,7 +87,7 @@ state-of-the-art results on **14 sub-tasks** in a code intelligence benchmark - 
 
 Paper link: https://arxiv.org/abs/2109.00859
 
-Blog link: https://blog.einstein.ai/codet5/
+Blog link: https://blog.salesforceairesearch.com/codet5/
 
 The code currently includes two pre-trained checkpoints ([CodeT5-small](https://huggingface.co/Salesforce/codet5-small)
 and [CodeT5-base](https://huggingface.co/Salesforce/codet5-base)) and scripts to fine-tine them on 4 generation tasks (
