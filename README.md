@@ -194,6 +194,12 @@ For example, if you want to run CodeT5-base model on the code summarization task
 python run_exp.py --model_tag codet5_base --task summarize --sub_task python
 ```
 
+For multi-task training, you can type:
+
+```
+python run_exp.py --model_tag codet5_base --task multi_task --sub_task none
+```
+
 Besides, you can specify:
 
 ```
