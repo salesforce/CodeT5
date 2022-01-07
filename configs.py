@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def add_args(parser):
     parser.add_argument("--task", type=str, required=True,
-                        choices=['summarize', 'concode', 'translate', 'refine', 'defect', 'clone'])
+                        choices=['summarize', 'concode', 'translate', 'refine', 'defect', 'clone', 'multi_task'])
     parser.add_argument("--sub_task", type=str, default='')
     parser.add_argument("--lang", type=str, default='')
     parser.add_argument("--eval_task", type=str, default='')
@@ -19,7 +19,6 @@ def add_args(parser):
     parser.add_argument("--start_epoch", default=0, type=int)
     parser.add_argument("--num_train_epochs", default=100, type=int)
     parser.add_argument("--patience", default=5, type=int)
-    parser.add_argument("--tokenizer_path", type=str, required=True)
     parser.add_argument("--cache_path", type=str, required=True)
     parser.add_argument("--summary_dir", type=str, required=True)
     parser.add_argument("--data_dir", type=str, required=True)

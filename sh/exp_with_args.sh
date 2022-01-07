@@ -24,7 +24,12 @@ else
   EPOCH=1
 fi
 
-FULL_MODEL_TAG=${MODEL_TAG}_${DATA_TAG}_lr${LR}_bs${BS}_src${SRC_LEN}_trg${TRG_LEN}_pat${PATIENCE}_e${EPOCH}
+if [[ ${TASK} == 'multi_task' ]]; then
+  FULL_MODEL_TAG=${MODEL_TAG}_${DATA_TAG}_lr${LR}_s${16}
+else
+  FULL_MODEL_TAG=${MODEL_TAG}_${DATA_TAG}_lr${LR}_bs${BS}_src${SRC_LEN}_trg${TRG_LEN}_pat${PATIENCE}_e${EPOCH}
+fi
+
 
 if [[ ${SUB_TASK} == none ]]; then
   OUTPUT_DIR=${MODEL_DIR}/${TASK}/${FULL_MODEL_TAG}
@@ -61,7 +66,11 @@ elif [[ $MODEL_TAG == codet5_base ]]; then
   MODEL_PATH=Salesforce/codet5-base
 fi
 
-if [[ ${TASK} == 'clone' ]]; then
+
+if [[ ${TASK} == 'multi_task' ]]; then
+  RUN_FN=${WORKDIR}/run_multi_gen.py
+  MULTI_TASK_AUG='--max_steps '${16}' --save_steps '${17}' --log_steps '${18}
+elif [[ ${TASK} == 'clone' ]]; then
   RUN_FN=${WORKDIR}/run_clone.py
 elif [[ ${TASK} == 'defect' ]] && [[ ${MODEL_TYPE} == 'roberta' ||  ${MODEL_TYPE} == 'bart' ]]; then
   RUN_FN=${WORKDIR}/run_defect.py
@@ -72,11 +81,11 @@ fi
 
 CUDA_VISIBLE_DEVICES=${GPU} \
   python ${RUN_FN}  \
-  --do_train --do_eval --do_eval_bleu --do_test  --save_last_checkpoints --always_save_model \
+  --do_train --do_eval --do_eval_bleu --do_test ${MULTI_TASK_AUG}  \
   --task ${TASK} --sub_task ${SUB_TASK} --model_type ${MODEL_TYPE} --data_num ${DATA_NUM}  \
   --num_train_epochs ${EPOCH} --warmup_steps ${WARMUP} --learning_rate ${LR}e-5 --patience ${PATIENCE} \
-  --tokenizer_name=${TOKENIZER} --tokenizer_path=${WORKDIR}/tokenizer/salesforce \
-  --model_name_or_path=${MODEL_PATH} --output_dir ${OUTPUT_DIR}  --summary_dir ${SUMMARY_DIR} \
-  --data_dir ${WORKDIR}/data  --cache_path ${CACHE_DIR} --res_dir ${RES_DIR} --res_fn ${RES_FN} \
+  --tokenizer_name=${TOKENIZER}  --model_name_or_path=${MODEL_PATH} --data_dir ${WORKDIR}/data  \
+  --cache_path ${CACHE_DIR}  --output_dir ${OUTPUT_DIR}  --summary_dir ${SUMMARY_DIR} \
+  --save_last_checkpoints --always_save_model --res_dir ${RES_DIR} --res_fn ${RES_FN} \
   --train_batch_size ${BS} --eval_batch_size ${BS} --max_source_length ${SRC_LEN} --max_target_length ${TRG_LEN} \
   2>&1 | tee ${LOG}

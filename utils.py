@@ -100,6 +100,75 @@ def load_and_cache_defect_data(args, filename, pool, tokenizer, split_tag, is_sa
     return examples, data
 
 
+def load_and_cache_multi_gen_data(args, pool, tokenizer, split_tag, only_src=False, is_sample=False):
+    cache_fn = os.path.join(args.cache_path, split_tag)
+    if os.path.exists(cache_fn) and not is_sample:
+        logger.info("Load cache data from %s", cache_fn)
+        examples_data_dict = torch.load(cache_fn)
+    else:
+        examples_data_dict = {}
+
+        task_list = ['summarize', 'translate', 'refine', 'concode', 'defect']
+        for task in task_list:
+            if task == 'summarize':
+                sub_tasks = ['ruby', 'javascript', 'go', 'python', 'java', 'php']
+            elif task == 'translate':
+                sub_tasks = ['java-cs', 'cs-java']
+            elif task == 'refine':
+                sub_tasks = ['small', 'medium']
+            else:
+                sub_tasks = ['none']
+            args.task = task
+            for sub_task in sub_tasks:
+                args.sub_task = sub_task
+                if task == 'summarize':
+                    args.max_source_length = 256
+                    args.max_target_length = 128
+                elif task == 'translate':
+                    args.max_source_length = 320
+                    args.max_target_length = 256
+                elif task == 'refine':
+                    if sub_task == 'small':
+                        args.max_source_length = 130
+                        args.max_target_length = 120
+                    else:
+                        args.max_source_length = 240
+                        args.max_target_length = 240
+                elif task == 'concode':
+                    args.max_source_length = 320
+                    args.max_target_length = 150
+                elif task == 'defect':
+                    args.max_source_length = 512
+                    args.max_target_length = 3  # as do not need to add lang ids
+
+                filename = get_filenames(args.data_dir, args.task, args.sub_task, split_tag)
+                examples = read_examples(filename, args.data_num, args.task)
+                if is_sample:
+                    examples = random.sample(examples, min(5000, len(examples)))
+                if split_tag == 'train':
+                    calc_stats(examples, tokenizer, is_tokenize=True)
+                else:
+                    calc_stats(examples)
+
+                tuple_examples = [(example, idx, tokenizer, args, split_tag) for idx, example in enumerate(examples)]
+                if args.data_num == -1:
+                    features = pool.map(convert_examples_to_features, tqdm(tuple_examples, total=len(tuple_examples)))
+                else:
+                    features = [convert_examples_to_features(x) for x in tuple_examples]
+                all_source_ids = torch.tensor([f.source_ids for f in features], dtype=torch.long)
+                if only_src:
+                    data = TensorDataset(all_source_ids)
+                else:
+                    all_target_ids = torch.tensor([f.target_ids for f in features], dtype=torch.long)
+                    data = TensorDataset(all_source_ids, all_target_ids)
+                examples_data_dict['{}_{}'.format(task, sub_task) if sub_task != 'none' else task] = (examples, data)
+
+        if args.local_rank in [-1, 0] and not is_sample:
+            torch.save(examples_data_dict, cache_fn)
+            logger.info("Save data into %s", cache_fn)
+    return examples_data_dict
+
+
 def get_filenames(data_root, task, sub_task, split=''):
     if task == 'concode':
         data_dir = '{}/{}'.format(data_root, task)
@@ -148,7 +217,7 @@ def get_filenames(data_root, task, sub_task, split=''):
 
 def read_examples(filename, data_num, task):
     read_example_dict = {
-        'summarize': read_summarize_examples, 
+        'summarize': read_summarize_examples,
         'refine': read_refine_examples,
         'translate': read_translate_examples,
         'concode': read_concode_examples,
