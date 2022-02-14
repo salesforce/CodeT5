@@ -1,4 +1,5 @@
-WORKDIR="path_to_your_dir/CodeT5"
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+WORKDIR="${SCRIPT_DIR}/.."
 export PYTHONPATH=$WORKDIR
 
 TASK=${1}
