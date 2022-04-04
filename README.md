@@ -90,7 +90,7 @@ Paper link: https://arxiv.org/abs/2109.00859
 Blog link: https://blog.salesforceairesearch.com/codet5/
 
 The code currently includes two pre-trained checkpoints ([CodeT5-small](https://huggingface.co/Salesforce/codet5-small)
-and [CodeT5-base](https://huggingface.co/Salesforce/codet5-base)) and scripts to fine-tine them on 4 generation tasks (
+and [CodeT5-base](https://huggingface.co/Salesforce/codet5-base)) and scripts to fine-tune them on 4 generation tasks (
 code summarization, code generation, translation, and refinement) plus 2 understanding tasks (code defect detection and
 clone detection) in CodeXGLUE. We also provide their fine-tuned checkpoints to facilitate the easy replication
 of our paper.
@@ -177,7 +177,7 @@ Go to `sh` folder, set the `WORKDIR` in `exp_with_args.sh` to be your cloned Cod
 You can use `run_exp.py` to run a broad set of experiments by simply passing the `model_tag`, `task`, and `sub_task`
 arguments. In total, we support five models (i.e., ['roberta', 'codebert', 'bart_base', 'codet5_small', 'codet5_base'])
 and six tasks (i.e., ['summarize', 'concode', 'translate', 'refine', 'defect', 'clone']). For each task, we use
-the `sub_task` to specify which specific datasets to fine-tine on. Below is the full list:
+the `sub_task` to specify which specific datasets to fine-tne on. Below is the full list:
 
 | \--task   | \--sub\_task                       | Description                                                                                                                      |
 | --------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
