@@ -76,6 +76,8 @@ def get_args_by_task_model(task, sub_task, model_tag):
             bs = 64
         elif task == 'clone':
             bs = 25
+    elif 'codet5_large' in model_tag:
+        bs = 8
     else:
         bs = 32
         if task == 'translate':
@@ -142,7 +144,7 @@ def get_sub_tasks(task):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_tag", type=str, default='codet5_base',
-                        choices=['roberta', 'codebert', 'bart_base', 'codet5_small', 'codet5_base'])
+                        choices=['roberta', 'codebert', 'bart_base', 'codet5_small', 'codet5_base', 'codet5_large'])
     parser.add_argument("--task", type=str, default='summarize', choices=['summarize', 'concode', 'translate',
                                                                           'refine', 'defect', 'clone', 'multi_task'])
     parser.add_argument("--sub_task", type=str, default='ruby')

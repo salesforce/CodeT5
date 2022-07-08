@@ -1,4 +1,4 @@
-WORKDIR="path_to_your_dir/CodeT5"
+WORKDIR="your_CodeT5_path/CodeT5"
 export PYTHONPATH=$WORKDIR
 
 TASK=${1}
@@ -64,6 +64,10 @@ elif [[ $MODEL_TAG == codet5_base ]]; then
   MODEL_TYPE=codet5
   TOKENIZER=Salesforce/codet5-base
   MODEL_PATH=Salesforce/codet5-base
+elif [[ $MODEL_TAG == codet5_large ]]; then
+  MODEL_TYPE=codet5
+  TOKENIZER=Salesforce/codet5-large
+  MODEL_PATH=Salesforce/codet5-large
 fi
 
 
@@ -78,10 +82,9 @@ else
   RUN_FN=${WORKDIR}/run_gen.py
 fi
 
-
 CUDA_VISIBLE_DEVICES=${GPU} \
-  python ${RUN_FN}  \
-  --do_train --do_eval --do_eval_bleu --do_test ${MULTI_TASK_AUG}  \
+  python ${RUN_FN}  ${MULTI_TASK_AUG}   \
+  --do_train --do_eval --do_eval_bleu --do_test  \
   --task ${TASK} --sub_task ${SUB_TASK} --model_type ${MODEL_TYPE} --data_num ${DATA_NUM}  \
   --num_train_epochs ${EPOCH} --warmup_steps ${WARMUP} --learning_rate ${LR}e-5 --patience ${PATIENCE} \
   --tokenizer_name=${TOKENIZER}  --model_name_or_path=${MODEL_PATH} --data_dir ${WORKDIR}/data  \
