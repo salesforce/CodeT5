@@ -21,6 +21,7 @@ def get_model_size(model):
 
 
 def build_or_load_gen_model(args):
+    print(args.config_name, args.model_name_or_path)
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path)
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name)
