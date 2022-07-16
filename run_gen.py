@@ -279,7 +279,7 @@ def main():
                     # output_model_file = os.path.join(last_output_dir, "pytorch_model.bin")
                     # torch.save(model_to_save.state_dict(), output_model_file)
                     # logger.info("Save the last model into %s", output_model_file)
-                    model_to_save.save_pretrained(args.output_dir)
+                    model_to_save.save_pretrained(last_output_dir)
                     logger.info("Save the best ppl model into %s", last_output_dir)
 
                 if eval_ppl < best_ppl:
@@ -298,7 +298,7 @@ def main():
                         # output_model_file = os.path.join(output_dir, "pytorch_model.bin")
                         # torch.save(model_to_save.state_dict(), output_model_file)
                         # logger.info("Save the best ppl model into %s", output_model_file)
-                        model_to_save.save_pretrained(args.output_dir)
+                        model_to_save.save_pretrained(output_dir)
                         logger.info("Save the best ppl model into %s", output_dir)
                 else:
                     not_loss_dec_cnt += 1
@@ -340,9 +340,11 @@ def main():
                             os.makedirs(output_dir)
                         if args.data_num == -1 or args.always_save_model:
                             model_to_save = model.module if hasattr(model, 'module') else model
-                            output_model_file = os.path.join(output_dir, "pytorch_model.bin")
-                            torch.save(model_to_save.state_dict(), output_model_file)
-                            logger.info("Save the best bleu model into %s", output_model_file)
+                            # output_model_file = os.path.join(output_dir, "pytorch_model.bin")
+                            # torch.save(model_to_save.state_dict(), output_model_file)
+                            # logger.info("Save the best bleu model into %s", output_model_file)
+                            model_to_save.save_pretrained(output_dir)
+                            logger.info("Save the best ppl model into %s", output_dir)
                     else:
                         not_bleu_em_inc_cnt += 1
                         logger.info("Bleu does not increase for %d epochs", not_bleu_em_inc_cnt)
