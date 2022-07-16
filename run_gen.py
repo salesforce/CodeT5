@@ -280,7 +280,7 @@ def main():
                     # torch.save(model_to_save.state_dict(), output_model_file)
                     # logger.info("Save the last model into %s", output_model_file)
                     model_to_save.save_pretrained(args.output_dir)
-                    logger.info("Save the best ppl model into %s", output_dir)
+                    logger.info("Save the best ppl model into %s", last_output_dir)
 
                 if eval_ppl < best_ppl:
                     not_loss_dec_cnt = 0
