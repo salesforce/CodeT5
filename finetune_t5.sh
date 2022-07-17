@@ -11,5 +11,6 @@ python run_gen.py --do_train --do_eval --do_eval_bleu --do_test  \
 	--save_last_checkpoints --always_save_model \
 	--res_dir /home/aumahesh/w266-summer-2022-project/data/finetuned/codet5/results --res_fn t5_res.txt \
 	--train_batch_size 16 --eval_batch_size 8 --max_source_length 256 --max_target_length 128 \
+	--save_pretrained \
 	2>&1 | tee /home/aumahesh/w266-summer-2022-project/data/finetuned/codet5/log/log.txt
 

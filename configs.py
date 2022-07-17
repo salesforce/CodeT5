@@ -65,6 +65,8 @@ def add_args(parser):
                         help="Set this flag if you are using an uncased model.")
     parser.add_argument("--no_cuda", action='store_true',
                         help="Avoid using CUDA when available")
+    parser.add_argument("--save_pretrained", action='store_true',
+                        help="Whether to save models using save_pretrained function")
 
     parser.add_argument("--train_batch_size", default=8, type=int,
                         help="Batch size per GPU/CPU for training.")
