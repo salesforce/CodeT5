@@ -1,7 +1,7 @@
 #!/bin/bash
 python run_gen.py --do_train --do_eval --do_eval_bleu --do_test  \
 	--task summarize --sub_task python --model_type codet5 --data_num -1 \
-	--num_train_epochs 1 --warmup_steps 1000 --learning_rate 5e-5 --patience 3 \
+	--num_train_epochs 3 --warmup_steps 1000 --learning_rate 5e-5 --patience 3 \
 	--tokenizer_name=Salesforce/codet5-base  \
 	--model_name_or_path /home/aumahesh/w266-summer-2022-project/data/model_mrv_cds_best \
 	--data_dir /home/aumahesh/w266-summer-2022-project/data/code-docstring-corpus/data  \
