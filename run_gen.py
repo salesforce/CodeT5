@@ -33,6 +33,8 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 from transformers import AdamW, get_linear_schedule_with_warmup
+
+from CustomDataParallel import CustomDataParallel
 from models import build_or_load_gen_model
 from evaluator import smooth_bleu
 from evaluator.CodeBLEU import calc_code_bleu
@@ -179,7 +181,7 @@ def main():
     model.to(args.device)
     if args.n_gpu > 1:
         # for DataParallel
-        model = torch.nn.DataParallel(model)
+        model = CustomDataParallel(model, device_ids=[i for i in range(args.n_gpu)])
     pool = multiprocessing.Pool(args.cpu_cont)
     args.train_filename, args.dev_filename, args.test_filename = get_filenames(args.data_dir, args.task, args.sub_task)
     fa = open(os.path.join(args.output_dir, 'summary.log'), 'a+')
@@ -322,9 +324,6 @@ def main():
                     eval_examples, eval_data = load_and_cache_gen_data(args, args.dev_filename, pool, tokenizer, 'dev',
                                                                        only_src=True, is_sample=True)
 
-                    if args.n_gpu > 1:
-                        # for DataParallel
-                        model = torch.nn.DataParallel(model)
                     result = eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, 'dev', 'e%d' % cur_epoch)
                     dev_bleu, dev_em = result['bleu'], result['em']
                     if args.task in ['summarize']:
