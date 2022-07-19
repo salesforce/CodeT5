@@ -45,6 +45,21 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Reference: https://stackoverflow.com/questions/50442000/dataparallel-object-has-no-attribute-init-hidden
+class _CustomDataParallel(torch.nn.Module):
+    def __init__(self, model):
+        super(_CustomDataParallel, self).__init__()
+        self.model = torch.nn.DataParallel(model).cuda()
+
+    def forward(self, *input):
+        return self.model(*input)
+
+    def __getattr__(self, name):
+        try:
+            return super().__getattr__(name)
+        except AttributeError:
+            return getattr(self.model.module, name)
+
 
 def eval_ppl_epoch(args, eval_data, eval_examples, model, tokenizer):
     eval_sampler = SequentialSampler(eval_data)
@@ -180,7 +195,7 @@ def main():
     model.to(args.device)
     if args.n_gpu > 1:
         # for DataParallel
-        model = torch.nn.DataParallel(model)
+        model = _CustomDataParallel(model)
     pool = multiprocessing.Pool(args.cpu_cont)
     args.train_filename, args.dev_filename, args.test_filename = get_filenames(args.data_dir, args.task, args.sub_task)
     fa = open(os.path.join(args.output_dir, 'summary.log'), 'a+')
