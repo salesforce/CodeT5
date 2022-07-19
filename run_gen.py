@@ -23,6 +23,8 @@ import os
 import logging
 import argparse
 import math
+from collections import OrderedDict
+
 import numpy as np
 from tqdm import tqdm
 import multiprocessing
@@ -382,7 +384,18 @@ def main():
         for criteria in ['best-bleu']:
             file = os.path.join(args.output_dir, 'checkpoint-{}/pytorch_model.bin'.format(criteria))
             logger.info("Reload model from {}".format(file))
-            model.load_state_dict(torch.load(file))
+            state_dict = torch.load(file)
+            new_state_dict = OrderedDict()
+            if args.n_gpu > 1:
+                for k, v in state_dict.items():
+                    if 'module' not in k:
+                        k = 'module.' + k
+                    else:
+                        k = k.replace('features.module.', 'module.features.')
+                    new_state_dict[k] = v
+                model.load_state_dict(new_state_dict)
+            else:
+                model.load_state_dict(state_dict)
             eval_examples, eval_data = load_and_cache_gen_data(args, args.test_filename, pool, tokenizer, 'test',
                                                                only_src=True, is_sample=False)
             result = eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, 'test', criteria)
