@@ -72,6 +72,10 @@ def eval_ppl_epoch(args, eval_data, eval_examples, model, tokenizer):
                                 labels=target_ids, decoder_attention_mask=target_mask)
                 loss = outputs.loss
 
+        if args.n_gpu > 1:
+            loss = loss.mean()  # mean() to average on multi-gpu.
+        if args.gradient_accumulation_steps > 1:
+            loss = loss / args.gradient_accumulation_steps
         eval_loss += loss.item()
         batch_num += 1
     eval_loss = eval_loss / batch_num
