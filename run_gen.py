@@ -187,6 +187,18 @@ def main():
     pool = multiprocessing.Pool(args.cpu_cont)
     args.train_filename, args.dev_filename, args.test_filename = get_filenames(args.data_dir, args.task, args.sub_task)
     fa = open(os.path.join(args.output_dir, 'summary.log'), 'a+')
+    # Save best checkpoint for best bleu
+    model_to_save = model.module if hasattr(model, 'module') else model
+    output_dir = os.path.join(args.output_dir, 'checkpoint-best-bleu')
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    if args.save_pretrained:
+        model_to_save.save_pretrained(output_dir)
+        logger.info("Save the base model as best bleu at %s", output_dir)
+    else:
+        output_model_file = os.path.join(output_dir, "pytorch_model.bin")
+        torch.save(model_to_save.state_dict(), output_model_file)
+        logger.info("Save the base model as best bleu at %s", output_model_file)
 
     if args.do_train:
         if args.local_rank in [-1, 0] and args.data_num == -1:
