@@ -19,13 +19,7 @@ def get_model_size(model):
     model_size = sum([np.prod(p.size()) for p in model_parameters])
     return "{}M".format(round(model_size / 1e+6))
 
-def cleanup_cuda():
-    torch.cuda.empty_cache()
-    gc.collect()
-    logger.info(torch.cuda.memory_summary(device=None, abbreviated=False))
-
 def build_or_load_gen_model(args):
-    cleanup_cuda()
     logger.info("config: name %s, path %s", args.config_name, args.model_name_or_path)
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path)
