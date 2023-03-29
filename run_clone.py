@@ -21,6 +21,8 @@ using a masked language modeling (MLM) loss.
 
 from __future__ import absolute_import
 import os
+import pdb
+
 from models import CloneModel
 import logging
 import argparse
@@ -136,6 +138,7 @@ def main():
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path)
     model = model_class.from_pretrained(args.model_name_or_path)
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name)
+    model.resize_token_embeddings(32000)
 
     model = CloneModel(model, config, tokenizer, args)
     logger.info("Finish loading model [%s] from %s", get_model_size(model), args.model_name_or_path)
