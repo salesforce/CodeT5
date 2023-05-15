@@ -2,7 +2,7 @@
 
 Official research release for the **CodeT5+** models (`220M`, `770M`, `2B`, `6B` `16B`) for a wide range of **Code Understanding and Generation** tasks.
 
-*Title*: [CodeT5+: Open Code Large Language Models for Code Understanding and Generation](https://github.com/salesforce/CodeT5/CodeT5+)
+*Title*: [CodeT5+: Open Code Large Language Models for Code Understanding and Generation](https://github.com/salesforce/CodeT5/tree/main/CodeT5+)
 
 *Authors*: [Yue Wang](https://yuewang-cuhk.github.io/)\*, [Hung Le](https://sites.google.com/view/henryle2018/home?pli=1)\*, [Akhilesh Deepak Gotmare](https://akhileshgotmare.github.io/), [Nghi D.Q. Bui](https://bdqnghi.github.io/), [Junnan Li](https://sites.google.com/site/junnanlics), [Steven C.H. Hoi](https://sites.google.com/view/stevenhoi/home) (* indicates equal contribution)
 
