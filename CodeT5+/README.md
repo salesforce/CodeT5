@@ -24,6 +24,7 @@ We release the following CodeT5+ models:
 
 * CodeT5+ `220M` and `770M` at Huggingface [here](https://huggingface.co/Salesforce/codet5p-220m) and [here](https://huggingface.co/Salesforce/codet5p-770m), respectively.
 * CodeT5+ `220M` and `770M` that are further tuned on Python subset at Huggingface [here](https://huggingface.co/Salesforce/codet5p-220m-py) and [here](https://huggingface.co/Salesforce/codet5p-770m-py), respectively.
+* InstructCodeT5+ `16B` at Huggingface [here](https://huggingface.co/Salesforce/instructcodet5p-16b)
 * CodeT5+ `2B`, `6B`, `16B` will be released soon.
 
 # How to Use?
