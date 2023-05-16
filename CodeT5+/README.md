@@ -2,7 +2,7 @@
 
 Official research release for the **CodeT5+** models (`220M`, `770M`, `2B`, `6B` `16B`) for a wide range of **Code Understanding and Generation** tasks.
 
-*Title*: [CodeT5+: Open Code Large Language Models for Code Understanding and Generation](https://github.com/salesforce/CodeT5/tree/main/CodeT5+)
+*Title*: [CodeT5+: Open Code Large Language Models for Code Understanding and Generation](https://arxiv.org/pdf/2305.07922.pdf)
 
 *Authors*: [Yue Wang](https://yuewang-cuhk.github.io/)\*, [Hung Le](https://sites.google.com/view/henryle2018/home?pli=1)\*, [Akhilesh Deepak Gotmare](https://akhileshgotmare.github.io/), [Nghi D.Q. Bui](https://bdqnghi.github.io/), [Junnan Li](https://sites.google.com/site/junnanlics), [Steven C.H. Hoi](https://sites.google.com/view/stevenhoi/home) (* indicates equal contribution)
 
@@ -15,6 +15,7 @@ Furthermore, we explore instruction tuning to align the model with natural langu
 
 We implemented a family of CodeT5+ models, with model size ranging from 220M to 16B. 
 Note that CodeT5+ 220M and 770M employ the same architecture of CodeT5-base and large respectively and are pretrained from scratch, while CodeT5+ 2B, 6B, 16B employ a "_shallow encoder and deep decoder_" architecture with the shallow encoder initialized from CodeGen-mono 350M and the deep decoder initialized from CodeGen-mono 2B, 6B, 16B, respectively.
+InstructCodeT5+ 16B is our instruction-tuned model from CodeT5+ 16B. 
 
 ![CodeT5+ overview](codet5p_overview.png)
 
