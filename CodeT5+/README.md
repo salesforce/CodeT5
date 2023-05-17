@@ -9,19 +9,16 @@ Official research release for the **CodeT5+** models (`220M`, `770M`, `2B`, `6B`
 # What is this about?
 CodeT5+ is a new family of open code large language models with an encoder-decoder architecture that can flexibly operate in different modes (i.e. _encoder-only_, _decoder-only_, and _encoder-decoder_) to support a wide range of code understanding and generation tasks.
 See the below overview of CodeT5+.
-![CodeT5+ overview](codet5p_overview.png)
 
 To train CodeT5+, we introduce a diverse set of pretraining tasks including _span denoising_, _causal language modeling_, _contrastive learning_, and _text-code matching_ to learn rich representations from both unimodal code data and bimodal code-text data. 
 Additionally, to efficiently scale up the model, we propose a simple yet effective _compute-efficient pretraining_ method to initialize our model with frozen off-the-shelf LLMs such as [CodeGen](https://github.com/salesforce/CodeGen). 
 Furthermore, we explore instruction tuning to align the model with natural language instructions following [Code Alpaca](https://github.com/sahil280114/codealpaca). 
-![CodeT5+ architecture](codet5p_architecture.png)
-
 
 We implemented a family of CodeT5+ models, with model size ranging from 220M to 16B. 
 Note that CodeT5+ `220M` and `770M` employ the same architecture of CodeT5-base and large respectively and are pretrained from scratch, while CodeT5+ `2B`, `6B`, `16B` employ a "_shallow encoder and deep decoder_" architecture with the shallow encoder initialized from CodeGen-mono 350M and the deep decoder initialized from CodeGen-mono 2B, 6B, 16B, respectively.
 InstructCodeT5+ 16B is our instruction-tuned model from CodeT5+ 16B. 
 
-
+![CodeT5+ overview](codet5p_overview.png)
 
 # Released Models
 We release the following CodeT5+ models at Huggingface:
@@ -30,6 +27,8 @@ We release the following CodeT5+ models at Huggingface:
 * CodeT5+ `220M` and `770M` that are further tuned on Python subset: [codet5p-220m-py](https://huggingface.co/Salesforce/codet5p-220m-py) and [codet5p-770m-py](https://huggingface.co/Salesforce/codet5p-770m-py).
 * CodeT5+ `2B`, `6B`, `16B`: [Salesforce/codet5p-2b](https://huggingface.co/Salesforce/codet5p-2b), [Salesforce/codet5p-6b](https://huggingface.co/Salesforce/codet5p-6b), and [Salesforce/codet5p-16b](https://huggingface.co/Salesforce/codet5p-16b).
 * InstructCodeT5+ `16B`: [Salesforce/instructcodet5p-16b](https://huggingface.co/Salesforce/instructcodet5p-16b).
+
+![CodeT5+ architecture](codet5p_architecture.png)
 
 # How to Use?
 All CodeT5+ models and tokenizers can be easily loaded using the `AutoModelForSeq2SeqLM` and `AutoTokenizer` functionality. 
