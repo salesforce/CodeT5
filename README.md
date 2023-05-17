@@ -1,20 +1,19 @@
 # CodeT5 and CodeT5+
 
-Official research release for  **CodeT5** and **CodeT5+** models for a wide range of **Code Understanding and Generation** tasks from Salesforce Research.
-These open code LLMs are introduced by the following papers:
+Official research release for  **CodeT5** and **CodeT5+** models for **Code Understanding and Generation** from Salesforce Research, which are introduced by the following papers:
 
 *Title*: [CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation](https://arxiv.org/pdf/2109.00859.pdf)
 
-*Authors*: [Yue Wang](https://yuewang-cuhk.github.io/), [Weishi Wang](https://www.linkedin.com/in/weishi-wang/)
+> *Authors*: [Yue Wang](https://yuewang-cuhk.github.io/), [Weishi Wang](https://www.linkedin.com/in/weishi-wang/)
 , [Shafiq Joty](https://raihanjoty.github.io/), [Steven C.H. Hoi](https://sites.google.com/view/stevenhoi/home)
 
 *Title*: [CodeT5+: Open Code Large Language Models for Code Understanding and Generation](https://arxiv.org/pdf/2305.07922.pdf)
 
-*Authors*: [Yue Wang](https://yuewang-cuhk.github.io/)\*, [Hung Le](https://sites.google.com/view/henryle2018/home?pli=1)\*, [Akhilesh Deepak Gotmare](https://akhileshgotmare.github.io/), [Nghi D.Q. Bui](https://bdqnghi.github.io/), [Junnan Li](https://sites.google.com/site/junnanlics), [Steven C.H. Hoi](https://sites.google.com/view/stevenhoi/home) (* indicates equal contribution)
+> *Authors*: [Yue Wang](https://yuewang-cuhk.github.io/)\*, [Hung Le](https://sites.google.com/view/henryle2018/home?pli=1)\*, [Akhilesh Deepak Gotmare](https://akhileshgotmare.github.io/), [Nghi D.Q. Bui](https://bdqnghi.github.io/), [Junnan Li](https://sites.google.com/site/junnanlics), [Steven C.H. Hoi](https://sites.google.com/view/stevenhoi/home) (* indicates equal contribution)
 
 
 In practice, CodeT5 and CodeT5+ models can be deployed as an AI-powered coding assistant to boost the productivity of software developers.
-At Salesforce, we build an AI coding assistant demo using CodeT5 as a VS Code plugin to provide three capabilities for Apex developers:
+At Salesforce, we build an AI coding assistant demo using CodeT5 as a VS Code plugin to provide three capabilities:
 
 - **Text-to-code generation**: generate code based on the natural language description.
 - **Code autocompletion**: complete the whole function of code given the target function name.
@@ -26,11 +25,12 @@ At Salesforce, we build an AI coding assistant demo using CodeT5 as a VS Code pl
 
 **May 2023**
 
-**CodeT5+** Paper and models released! ([paper](https://arxiv.org/pdf/2305.07922.pdf), [code](https://github.com/salesforce/CodeT5/tree/main/CodeT5+))
+**CodeT5+** paper and models are released! <br>
+[paper](https://arxiv.org/pdf/2305.07922.pdf) | [code](https://github.com/salesforce/CodeT5/tree/main/CodeT5+) | [model](https://huggingface.co/models?sort=downloads&search=codet5p)
 
 **July 2022**
 
-We release two large-sized CodeT5 checkpoints at Hugging Face: [Salesforce/codet5-large](https://huggingface.co/Salesforce/codet5-large) and [Salesforce/codet5-large-ntp-py](https://huggingface.co/Salesforce/codet5-large-ntp-py), which are introduced by the [CodeRL paper](https://arxiv.org/pdf/2207.01780.pdf).
+We release two large-sized CodeT5 checkpoints at HuggingFace: [Salesforce/codet5-large](https://huggingface.co/Salesforce/codet5-large) and [Salesforce/codet5-large-ntp-py](https://huggingface.co/Salesforce/codet5-large-ntp-py), which are introduced by the [CodeRL paper](https://arxiv.org/pdf/2207.01780.pdf).
 
 **Oct 2021**
 
@@ -43,9 +43,9 @@ multilingual code summarization.
 
 **Sep, 2021**
 
-CodeT5 is now in [hugginface](https://huggingface.co/)!  ([CodeT5-small](https://huggingface.co/Salesforce/codet5-small) and [CodeT5-base](https://huggingface.co/Salesforce/codet5-base)).
+CodeT5 is now in Huggingface! [CodeT5-small](https://huggingface.co/Salesforce/codet5-small) and [CodeT5-base](https://huggingface.co/Salesforce/codet5-base)).
 
-We add a [model card](https://github.com/salesforce/CodeT5/blob/main/CodeT5_model_card.pdf) for CodeT5! Please reach out
+We add a [model card](https://github.com/salesforce/CodeT5/blob/main/CodeT5/CodeT5_model_card.pdf) for CodeT5! Please reach out
 if you have any questions about it.
 
 
