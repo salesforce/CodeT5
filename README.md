@@ -25,8 +25,14 @@ At Salesforce, we build an AI coding assistant demo using CodeT5 as a VS Code pl
 
 **May 2023**
 
-**CodeT5+** paper and models are released! <br>
+**CodeT5+** paper and models are released！🔥 <br>
 [paper](https://arxiv.org/pdf/2305.07922.pdf) | [code](https://github.com/salesforce/CodeT5/tree/main/CodeT5+) | [model](https://huggingface.co/models?sort=downloads&search=codet5p)
+
+**Sep 2022**
+
+Our **CodeRL** paper has been accepted to NeurIPS 2022! <br>
+[paper](https://arxiv.org/pdf/2207.01780.pdf) | [code](https://github.com/salesforce/CodeRL) | [blog](https://blog.salesforceairesearch.com/coderl) 
+
 
 **July 2022**
 
@@ -43,10 +49,11 @@ multilingual code summarization.
 
 **Sep, 2021**
 
-CodeT5 is now in Huggingface! [CodeT5-small](https://huggingface.co/Salesforce/codet5-small) and [CodeT5-base](https://huggingface.co/Salesforce/codet5-base)).
+**CodeT5** paper accepted to EMNLP 2021 and models are released! <br>
+[paper](https://arxiv.org/pdf/2109.00859.pdf) | [code](https://github.com/salesforce/CodeT5/tree/main/CodeT5) | [model](https://huggingface.co/models?sort=downloads&search=codet5) | [model card](https://github.com/salesforce/CodeT5/blob/main/CodeT5/CodeT5_model_card.pdf) | [blog](https://blog.salesforceairesearch.com/codet5/) 
 
-We add a [model card](https://github.com/salesforce/CodeT5/blob/main/CodeT5/CodeT5_model_card.pdf) for CodeT5! Please reach out
-if you have any questions about it.
+
+
 
 
 
