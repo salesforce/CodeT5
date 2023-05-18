@@ -19,6 +19,7 @@ Furthermore, we explore instruction tuning to align the model with natural langu
 We implemented a family of CodeT5+ models, with model size ranging from 220M to 16B. 
 Note that CodeT5+ `220M` and `770M` employ the same architecture of CodeT5-base and large respectively and are pretrained from scratch, while CodeT5+ `2B`, `6B`, `16B` employ a "_shallow encoder and deep decoder_" architecture with the shallow encoder initialized from CodeGen-mono 350M and the deep decoder initialized from CodeGen-mono 2B, 6B, 16B, respectively.
 InstructCodeT5+ 16B is our instruction-tuned model from CodeT5+ 16B. 
+Note that as this model utilizes instruction tuning data curated using OpenAI API, the checkpoint of InstructCodeT5+ 16B is licensed for research and **non-commercial** use only.
 
 We release the following CodeT5+ models at Huggingface:
 * CodeT5+ `220M` and `770M`: [codet5p-220m](https://huggingface.co/Salesforce/codet5p-220m) and [codet5p-770m](https://huggingface.co/Salesforce/codet5p-770m).
