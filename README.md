@@ -36,7 +36,7 @@ Our **CodeRL** paper has been accepted to NeurIPS 2022! <br>
 
 **July 2022**
 
-We release two large-sized CodeT5 checkpoints at HuggingFace: [Salesforce/codet5-large](https://huggingface.co/Salesforce/codet5-large) and [Salesforce/codet5-large-ntp-py](https://huggingface.co/Salesforce/codet5-large-ntp-py), which are introduced by the [CodeRL paper](https://arxiv.org/pdf/2207.01780.pdf).
+We release two large-sized CodeT5 checkpoints at Hugging Face: [Salesforce/codet5-large](https://huggingface.co/Salesforce/codet5-large) and [Salesforce/codet5-large-ntp-py](https://huggingface.co/Salesforce/codet5-large-ntp-py), which are introduced by the [CodeRL paper](https://arxiv.org/pdf/2207.01780.pdf).
 
 **Oct 2021**
 
