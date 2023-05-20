@@ -1,10 +1,12 @@
 # CodeT5+
 
 Official research release for the **CodeT5+** models (`220M`, `770M`, `2B`, `6B` `16B`) for a wide range of **Code Understanding and Generation** tasks.
+Find out more via our [blog post](https://blog.salesforceairesearch.com/codet5-open-code-large-language-models/).
 
 *Title*: [CodeT5+: Open Code Large Language Models for Code Understanding and Generation](https://arxiv.org/pdf/2305.07922.pdf)
 
 *Authors*: [Yue Wang](https://yuewang-cuhk.github.io/)\*, [Hung Le](https://sites.google.com/view/henryle2018/home?pli=1)\*, [Akhilesh Deepak Gotmare](https://akhileshgotmare.github.io/), [Nghi D.Q. Bui](https://bdqnghi.github.io/), [Junnan Li](https://sites.google.com/site/junnanlics), [Steven C.H. Hoi](https://sites.google.com/view/stevenhoi/home) (* indicates equal contribution)
+
 
 # What is this about?
 CodeT5+ is a new family of open code large language models with an encoder-decoder architecture that can flexibly operate in different modes (i.e. _encoder-only_, _decoder-only_, and _encoder-decoder_) to support a wide range of code understanding and generation tasks.
@@ -32,7 +34,8 @@ We release the following CodeT5+ models at Huggingface:
 # How to Use?
 All CodeT5+ models and tokenizers can be easily loaded using the `AutoModelForSeq2SeqLM` and `AutoTokenizer` functionality. 
 For tokenizers, CodeT5+ `220M` and `770M` employ the same tokenizer as the original [CodeT5](https://github.com/salesforce/CodeT5) while CodeT5+ `2B`, `6B`, `16B` employ the same tokenizer as [CodeGen]( https://github.com/salesforce/CodeGen).
-To load CodeT5+ `2B`, `6B`, `16B`, please set `trust_remote_code=True` as the [model class](https://huggingface.co/Salesforce/codet5p-16b/blob/main/modeling_codet5p.py) is defined in the Huggingface repo.
+To load CodeT5+ `2B`, `6B`, `16B`, and InstructCodeT5+ `16B`, please set `trust_remote_code=True` as the [model class](https://huggingface.co/Salesforce/codet5p-16b/blob/main/modeling_codet5p.py) is defined in the Huggingface repo.
+Besides, these models would benefit from passing additional prompts to the decoder via `decoder_input_ids` to achieve better generation performance.
 
 
 ```python
@@ -48,17 +51,28 @@ model = AutoModelForSeq2SeqLM.from_pretrained(checkpoint,
                                               low_cpu_mem_usage=True,
                                               trust_remote_code=True).to(device)
 
-inputs = tokenizer.encode("def print_hello():", return_tensors="pt").to(device)
-outputs = model.generate(inputs, max_length=12)
+encoding = tokenizer("def print_hello_world():", return_tensors="pt").to(device)
+encoding['decoder_input_ids'] = encoding['input_ids'].clone()
+outputs = model.generate(**encoding, max_length=15)
 print(tokenizer.decode(outputs[0], skip_special_tokens=True))
-
 ```
 
 # Reproduce the Results
 
 ## HumanEval
 
-TBA
+### Installation
+* Install the official HumanEval evaluation tool released by OpenAI following the instructions in ihis [repo](https://github.com/openai/human-eval).
+* Install the Pytorch (version `1.13.1`) and transformers (version `4.21.3`) libraries.
+
+### Generating programs from CodeT5+ models
+`cd humaneval` then run the inference via `bash run_generate.sh`. 
+You can select the model to generate from by changing the `model` variable in the script.
+Following the original setting in the HumanEval paper, we generate 200 programs (`pred_num=200`) for each problem and employs nucleus sampling with different temperature `T` for computing `pass@k` (`T=0.2,0.6,0.8` for `k=1,10,100` respectively).
+The generated programs will be saved in `preds/${model}_T${temp}_N${pred_num}`.
+
+### Evaluating pass@k
+`cd humaneval` then run the evaluation via `bash run_eval.sh`.
 
 ## Citation
 

@@ -197,7 +197,23 @@ Note that we employ one A100 GPU for all fine-tuning experiments.
 ### How to fine-tune on your own task and dataset?
 If you want to fine-tune on your dataset, you can add your own task and sub_task in `configs.py` ([here](https://github.com/salesforce/CodeT5/blob/d27512d23ba6130e089e571d8c3e399760db1c31/configs.py#L11)) and add your data path and the function to read in `utils.py` ([here](https://github.com/salesforce/CodeT5/blob/5bb41e21b07fee73f310476a91ded00e385290d7/utils.py#L103) and [here](https://github.com/salesforce/CodeT5/blob/5bb41e21b07fee73f310476a91ded00e385290d7/utils.py#L149)). The read function can be implemented in `_utils.py` similar to [this one](https://github.com/salesforce/CodeT5/blob/aaf9c4a920c4986abfd54a74f5456b056b6409e0/_utils.py#L213). If your task to add is a generation task, you can simply reuse or customize the `run_gen.py`. For understanding tasks, please refer to `run_defect.py` and `run_clone.py`.
 
-## Get Involved
 
-Please create a GitHub issue if you have any questions, suggestions, requests or bug-reports. We welcome PRs!
+## Citation
 
+```bibtex
+@inproceedings{
+    wang2021codet5,
+    title={CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation}, 
+    author={Yue Wang, Weishi Wang, Shafiq Joty, Steven C.H. Hoi},
+    booktitle={EMNLP},
+    year={2021},
+}
+
+@inproceedings{
+    le2022coderl,
+    title={CodeRL: Mastering Code Generation through Pretrained Models and Deep Reinforcement Learning},
+    author={Le, Hung and Wang, Yue and Gotmare, Akhilesh Deepak and Savarese, Silvio and Hoi, Steven C. H.},
+    booktitle={NeurIPS},
+    year={2022}
+}
+```
