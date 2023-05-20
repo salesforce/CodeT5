@@ -34,7 +34,8 @@ We release the following CodeT5+ models at Huggingface:
 # How to Use?
 All CodeT5+ models and tokenizers can be easily loaded using the `AutoModelForSeq2SeqLM` and `AutoTokenizer` functionality. 
 For tokenizers, CodeT5+ `220M` and `770M` employ the same tokenizer as the original [CodeT5](https://github.com/salesforce/CodeT5) while CodeT5+ `2B`, `6B`, `16B` employ the same tokenizer as [CodeGen]( https://github.com/salesforce/CodeGen).
-To load CodeT5+ `2B`, `6B`, `16B`, and InstructCodeT5+ `16B`, please set `trust_remote_code=True` as the [model class](https://huggingface.co/Salesforce/codet5p-16b/blob/main/modeling_codet5p.py) is defined in the Huggingface repo.
+
+For CodeT5+ `2B`, `6B`, `16B`, and InstructCodeT5+ `16B`, please set `trust_remote_code=True` when loading the models as the [model class](https://huggingface.co/Salesforce/codet5p-16b/blob/main/modeling_codet5p.py) is defined in the Huggingface repo.
 Besides, these models would benefit from passing additional prompts to the decoder via `decoder_input_ids` to achieve better generation performance.
 
 
@@ -62,14 +63,14 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 ## HumanEval
 
 ### Installation
-* Install the official HumanEval evaluation tool released by OpenAI following the instructions in ihis [repo](https://github.com/openai/human-eval).
+* Install the official HumanEval evaluation tool released by OpenAI following the instructions in this [repo](https://github.com/openai/human-eval).
 * Install the Pytorch (version `1.13.1`) and transformers (version `4.21.3`) libraries.
 
 ### Generating programs from CodeT5+ models
 `cd humaneval` then run the inference via `bash run_generate.sh`. 
 You can select the model to generate from by changing the `model` variable in the script.
 Following the original setting in the HumanEval paper, we generate 200 programs (`pred_num=200`) for each problem and employs nucleus sampling with different temperature `T` for computing `pass@k` (`T=0.2,0.6,0.8` for `k=1,10,100` respectively).
-The generated programs will be saved in `preds/${model}_T${temp}_N${pred_num}`.
+The generated programs will be saved in `preds/${model}_T${T}_N${pred_num}`.
 
 ### Evaluating pass@k
 `cd humaneval` then run the evaluation via `bash run_eval.sh`.
