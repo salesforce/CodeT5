@@ -60,13 +60,12 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 
 # How to Finetune Using Your Own Data?
 
-We provide an example finetuning script `tune_codet5p_seq2seq.py` for CodeT5+ models on Seq2Seq LM task. 
-After installing the `transformers` and `datasets` libraries, you can run `python tune_codet5p_seq2seq.py` to finetune CodeT5+ models on any Seq2Seq LM tasks such as Python code summarization. 
-To finetune on your own data, you just need to prepare your customized cache data in the `datasets` format and pass its path to `--cache-data`.
+We provide an example finetuning script [tune_codet5p_seq2seq.py](https://github.com/salesforce/CodeT5/blob/main/CodeT5%2B/tune_codet5p_seq2seq.py) for CodeT5+ models on Seq2Seq LM task. 
+After installing the `transformers` and `datasets` libraries, you can run `python tune_codet5p_seq2seq.py` to finetune CodeT5+ models on any Seq2Seq LM tasks such as Python code summarization as illustrated in the script. 
+To finetune on your own data, you just need to prepare your customized data in the `datasets` format and pass its path to `--cache-data`.
 
-
-Besides, you can specify `--load` to specify the CodeT5+ model (such as `Salesforce/codet5p-220m`) to finetune from. To optimize the hyperparameter setting that suit your task best, you can customize other finetuning arguments such as  `--epochs`, `--lr`, `--lr-warmup-steps`, `--max-source-len`, `--max-target-len`, `--batch-size-per-replica`, `--grad-acc-steps`, etc.
-This script supports multi-GPU training and mixed-precision training by specifying `--fp16`. If you have limited GPU memory issue, consider to use [DeepSpeed](https://github.com/microsoft/DeepSpeed) by passing a deedspeed config file after `--deepspeed` (see [here](https://huggingface.co/docs/transformers/main_classes/deepspeed#zero2-example) for an example config file).
+Besides, you can specify `--load` to select the specific CodeT5+ model (e.g., `Salesforce/codet5p-220m`) to finetune from. To tune the hyper-parameter setting that suit your task the best, you can customize other finetuning arguments such as  `--epochs`, `--lr`, `--lr-warmup-steps`, `--max-source-len`, `--max-target-len`, `--batch-size-per-replica`, `--grad-acc-steps`, etc.
+This script naturally supports both single-GPU and multi-GPU training. If you have limited GPU memory issue and want to improve the training throughput, please consider to specify `--fp16` to enable mixed-precision training and use [DeepSpeed](https://github.com/microsoft/DeepSpeed) for further optimization by passing a deedspeed config file to `--deepspeed` (see [here](https://huggingface.co/docs/transformers/main_classes/deepspeed#zero2-example) for an example config file).
 
 # Reproduce the Results
 
@@ -85,7 +84,7 @@ The generated programs will be saved in `preds/${model}_T${T}_N${pred_num}`.
 ### Evaluating pass@k
 `cd humaneval` then run the evaluation via `bash run_eval.sh`.
 
-## Citation
+# Citation
 
 ```bibtex
 @article{wang2023codet5plus,
