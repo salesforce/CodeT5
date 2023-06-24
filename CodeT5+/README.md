@@ -58,6 +58,20 @@ outputs = model.generate(**encoding, max_length=15)
 print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 ```
 
+# Instruction Tuning to Align with Natural Language Instructions
+
+We explore instruction tuning to align CodeT5+ with natural language instructions following [Code Alpaca](https://github.com/sahil280114/codealpaca). First download the instruction data `code_alpaca_20k.json` from [here](https://github.com/sahil280114/codealpaca/tree/master/data). 
+Then, you can run the following command to finetune CodeT5+ 16B on the instruction data.
+
+```bash
+MODEL=Salesforce/codet5p-16b
+SAVE_DIR=saved_models/instructcodet5p-16b
+
+deepspeed instruct_tune_codet5p.py \
+  --load $MODEL --save-dir $SAVE_DIR --instruct-data-path code_alpaca_20k.json \
+  --fp16 --deepspeed deepspeed_config.json
+```
+
 # How to Finetune Using Your Own Data?
 
 We provide an example finetuning script [tune_codet5p_seq2seq.py](https://github.com/salesforce/CodeT5/blob/main/CodeT5%2B/tune_codet5p_seq2seq.py) for CodeT5+ models on Seq2Seq LM task. 
@@ -81,8 +95,49 @@ You can select the model to generate from by changing the `model` variable in th
 Following the original setting in the HumanEval paper, we generate 200 programs (`pred_num=200`) for each problem and employs nucleus sampling with different temperature `T` for computing `pass@k` (`T=0.2,0.6,0.8` for `k=1,10,100` respectively).
 The generated programs will be saved in `preds/${model}_T${T}_N${pred_num}`.
 
+```bash
+model=instructcodet5p-16b
+temp=0.2
+max_len=800
+pred_num=200
+num_seqs_per_iter=2 # 25 for 350M and 770M, 10 for 2B, 8 for 6B, 2 for 16B on A100-40G
+
+output_path=preds/${model}_T${temp}_N${pred_num}
+
+mkdir -p ${output_path}
+echo 'Output path: '$output_path
+echo 'Model to eval: '$model
+
+# 164 problems, 21 per GPU if GPU=8
+index=0
+gpu_num=8
+for ((i = 0; i < $gpu_num; i++)); do
+  start_index=$((i * 21))
+  end_index=$(((i + 1) * 21))
+
+  gpu=$((i))
+  echo 'Running process #' ${i} 'from' $start_index 'to' $end_index 'on GPU' ${gpu}
+  ((index++))
+  (
+    CUDA_VISIBLE_DEVICES=$gpu python generate_codet5p.py --model Salesforce/${model} \
+      --start_index ${start_index} --end_index ${end_index} --temperature ${temp} \
+      --num_seqs_per_iter ${num_seqs_per_iter} --N ${pred_num} --max_len ${max_len} --output_path ${output_path}
+  ) &
+  if (($index % $gpu_num == 0)); then wait; fi
+done
+```
+
 ### Evaluating pass@k
 `cd humaneval` then run the evaluation via `bash run_eval.sh`.
+
+```bash
+output_path=preds/instructcodet5p-16b_T0.2_N200
+
+echo 'Output path: '$output_path
+python process_preds.py --path ${output_path} --out_path ${output_path}.jsonl
+
+evaluate_functional_correctness ${output_path}.jsonl
+```
 
 # Citation
 
