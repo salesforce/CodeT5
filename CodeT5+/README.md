@@ -139,6 +139,13 @@ python process_preds.py --path ${output_path} --out_path ${output_path}.jsonl
 evaluate_functional_correctness ${output_path}.jsonl
 ```
 
+We also released the model predictions for our [InstructCodeT5+ 16B](https://huggingface.co/Salesforce/instructcodet5p-16b) at `humaneval/instructcodet5p-16b_T0.2_N200.jsonl` for your reference. 
+It can reproduce the results of `36.1% Pass@1` with the following command. Note that this result is slightly different from the reported `35.0% Pass@1` in the paper due to the randomness of the sampling process.
+
+```bash
+evaluate_functional_correctness humaneval/instructcodet5p-16b_T0.2_N200.jsonl
+```
+
 # Citation
 
 ```bibtex
