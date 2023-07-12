@@ -9,6 +9,45 @@ This is the official PyTorch implementation for the following EMNLP 2021 paper f
 
 ![CodeT5 demo](../codet5.gif)
 
+
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Updates](#updates)
+3. [Download Pretrained and Fine-tuned Checkpoints](#download-pretrained-and-fine-tuned-checkpoints)
+4. [Fine-tuning](#fine-tuning)
+   1. [How to run?](#how-to-run)
+   2. [How to reproduce the results using the released finetuned checkpoints?](#how-to-reproduce-the-results-using-the-released-finetuned-checkpoints)
+   3. [How to fine-tune on your own task and dataset?](#how-to-fine-tune-on-your-own-task-and-dataset)
+5. [Citation](#citation)
+
+## Introduction
+
+This repo provides the code for reproducing the experiments
+in [CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation](https://arxiv.org/pdf/2109.00859.pdf)
+. CodeT5 is a new pre-trained encoder-decoder model for programming languages, which is pre-trained on **8.35M**
+functions in 8 programming languages (Python, Java, JavaScript, PHP, Ruby, Go, C, and C#). In total, it achieves
+state-of-the-art results on **14 sub-tasks** in a code intelligence benchmark - [CodeXGLUE](https://github.com/microsoft/CodeXGLUE).
+
+Paper link: https://arxiv.org/abs/2109.00859
+
+Blog link: https://blog.salesforceairesearch.com/codet5/
+
+The code currently includes two pre-trained checkpoints ([CodeT5-small](https://huggingface.co/Salesforce/codet5-small)
+and [CodeT5-base](https://huggingface.co/Salesforce/codet5-base)) and scripts to fine-tune them on 4 generation tasks (
+code summarization, code generation, translation, and refinement) plus 2 understanding tasks (code defect detection and
+clone detection) in CodeXGLUE. We also provide their fine-tuned checkpoints to facilitate the easy replication
+of our paper.
+
+In practice, CodeT5 can be deployed as an AI-powered coding assistant to boost the productivity of software developers.
+At Salesforce, we build an [AI coding assistant demo](https://github.com/salesforce/CodeT5/raw/main/codet5.gif) using
+CodeT5 as a VS Code plugin to provide three capabilities for Apex developers:
+
+- **Text-to-code generation**: generate code based on the natural language description.
+- **Code autocompletion**: complete the whole function of code given the target function name.
+- **Code summarization**: generate the summary of a function in natural language description.
+
+
 ## Updates
 
 **July 06, 2022**
@@ -86,46 +125,8 @@ print(tokenizer.decode(generated_ids[0], skip_special_tokens=True))
 # this prints "{user.username}"
 ```
 
-## Introduction
 
-This repo provides the code for reproducing the experiments
-in [CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation](https://arxiv.org/pdf/2109.00859.pdf)
-. CodeT5 is a new pre-trained encoder-decoder model for programming languages, which is pre-trained on **8.35M**
-functions in 8 programming languages (Python, Java, JavaScript, PHP, Ruby, Go, C, and C#). In total, it achieves
-state-of-the-art results on **14 sub-tasks** in a code intelligence benchmark - [CodeXGLUE](https://github.com/microsoft/CodeXGLUE).
-
-Paper link: https://arxiv.org/abs/2109.00859
-
-Blog link: https://blog.salesforceairesearch.com/codet5/
-
-The code currently includes two pre-trained checkpoints ([CodeT5-small](https://huggingface.co/Salesforce/codet5-small)
-and [CodeT5-base](https://huggingface.co/Salesforce/codet5-base)) and scripts to fine-tune them on 4 generation tasks (
-code summarization, code generation, translation, and refinement) plus 2 understanding tasks (code defect detection and
-clone detection) in CodeXGLUE. We also provide their fine-tuned checkpoints to facilitate the easy replication
-of our paper.
-
-In practice, CodeT5 can be deployed as an AI-powered coding assistant to boost the productivity of software developers.
-At Salesforce, we build an [AI coding assistant demo](https://github.com/salesforce/CodeT5/raw/main/codet5.gif) using
-CodeT5 as a VS Code plugin to provide three capabilities for Apex developers:
-
-- **Text-to-code generation**: generate code based on the natural language description.
-- **Code autocompletion**: complete the whole function of code given the target function name.
-- **Code summarization**: generate the summary of a function in natural language description.
-
-## Table of Contents
-
-1. [Dependency](#dependency)
-2. [Download](#download)
-3. [Fine-tuning](#fine-tuning)
-
-## Dependency
-
-- Pytorch 1.7.1
-- tensorboard 2.4.1
-- transformers 4.6.1
-- tree-sitter 0.2.2
-
-## Download
+## Download Pretrained and Fine-tuned Checkpoints
 
 * [Pre-trained checkpoints](https://console.cloud.google.com/storage/browser/sfr-codet5-data-research/pretrained_models)
 * [Fine-tuning data](https://console.cloud.google.com/storage/browser/sfr-codet5-data-research/data)
@@ -144,6 +145,14 @@ gsutil -m cp -r "gs://sfr-codet5-data-research/finetuned_models" .
 
 ## Fine-tuning
 
+### Dependency
+
+- Pytorch 1.7.1
+- tensorboard 2.4.1
+- transformers 4.6.1
+- tree-sitter 0.2.2
+
+### How to run?
 Go to `sh` folder, set the `WORKDIR` in `exp_with_args.sh` to be your cloned CodeT5 repository path.
 
 You can use `run_exp.py` to run a broad set of experiments by simply passing the `model_tag`, `task`, and `sub_task`

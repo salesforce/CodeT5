@@ -8,6 +8,16 @@ Find out more via our [blog post](https://blog.salesforceairesearch.com/codet5-o
 *Authors*: [Yue Wang](https://yuewang-cuhk.github.io/)\*, [Hung Le](https://sites.google.com/view/henryle2018/home?pli=1)\*, [Akhilesh Deepak Gotmare](https://akhileshgotmare.github.io/), [Nghi D.Q. Bui](https://bdqnghi.github.io/), [Junnan Li](https://sites.google.com/site/junnanlics), [Steven C.H. Hoi](https://sites.google.com/view/stevenhoi/home) (* indicates equal contribution)
 
 
+## Table of Contents
+
+1. [What is this about?](#what-is-this-about)
+2. [Released Models](#released-models)
+3. [How to Use?](#how-to-use)
+4. [Instruction Tuning to Align with Natural Language Instructions](#instruction-tuning-to-align-with-natural-language-instructions)
+5. [How to Finetune Using Your Own Data?](#how-to-finetune-using-your-own-data)
+6. [Reproduce the Results](#reproduce-the-results)
+7. [Citation](#citation)
+
 # What is this about?
 CodeT5+ is a new family of open code large language models with an encoder-decoder architecture that can flexibly operate in different modes (i.e. _encoder-only_, _decoder-only_, and _encoder-decoder_) to support a wide range of code understanding and generation tasks.
 
@@ -106,6 +116,7 @@ Our CodeT5+ models achieves strong results on HumanEval benchmark in zero-shot s
 | code-cushman-001    | 33.5     | 54.3     | 77.4     |
 | StarCoder 15B       | 33.6     | -        | -        |
 | InstructCodeT5+ 16B | **36.1** | **57.1** | **80.7** |
+
 Please follow the instructions below to reproduce the results.
 
 
