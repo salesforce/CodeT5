@@ -84,6 +84,30 @@ This script naturally supports both single-GPU and multi-GPU training. If you ha
 # Reproduce the Results
 
 ## HumanEval
+Our CodeT5+ models achieves strong results on HumanEval benchmark in zero-shot setting. We follow common practices to employ nucleus sampling with different temperature `T` for computing `Pass@k` (`T=0.2,0.6,0.8` for `k=1,10,100` respectively).
+
+| Model               | Pass@1   | Pass@10  | Pass@100 |
+|---------------------|----------|----------|----------|
+| LLaMA 7B            | 10.5     | -        | 36.5     |
+| LaMDA  137B         | 14.0     | -        | 47.3     |
+| InCoder 6B          | 15.2     | 27.8     | 47.0     |
+| GPT-NeoX 20B        | 15.4     | 25.6     | 41.2     |
+| CodeT5+ 770M        | 15.5     | 27.2     | 42.7     |
+| LLaMA 13B           | 15.8     | -        | 52.5     |
+| PaLM  62B           | 15.9     | -        | 46.3     |
+| AlphaCode 1.1B      | 17.1     | 28.2     | 45.3     |
+| LLaMA 33B           | 21.7     | -        | 70.7     |
+| Replit 3B           | 21.9     | -        | -        |
+| CodeGeeX 13B        | 22.9     | 39.6     | 60.9     |
+| LLaMA 65B           | 23.7     | -        | 79.3     |
+| PaLM  540B          | 26.2     | -        | 76.2     |
+| CodeGen-mono 16B    | 29.3     | 49.9     | 75.0     |
+| CodeT5+ 16B         | 30.9     | 51.6     | 76.7     |
+| code-cushman-001    | 33.5     | 54.3     | 77.4     |
+| StarCoder 15B       | 33.6     | -        | -        |
+| InstructCodeT5+ 16B | **36.1** | **57.1** | **80.7** |
+Please follow the instructions below to reproduce the results.
+
 
 ### Installation
 * Install the official HumanEval evaluation tool released by OpenAI following the instructions in this [repo](https://github.com/openai/human-eval).
@@ -92,7 +116,7 @@ This script naturally supports both single-GPU and multi-GPU training. If you ha
 ### Generating programs from CodeT5+ models
 `cd humaneval` then run the inference via `bash run_generate.sh`. 
 You can select the model to generate from by changing the `model` variable in the script.
-Following the original setting in the HumanEval paper, we generate 200 programs (`pred_num=200`) for each problem and employs nucleus sampling with different temperature `T` for computing `pass@k` (`T=0.2,0.6,0.8` for `k=1,10,100` respectively).
+Following the original setting in the HumanEval paper, we generate 200 programs (`pred_num=200`) for each problem and employs nucleus sampling with different temperature `T` for computing `Pass@k` (`T=0.2,0.6,0.8` for `k=1,10,100` respectively).
 The generated programs will be saved in `preds/${model}_T${T}_N${pred_num}`.
 
 ```bash
@@ -127,7 +151,7 @@ for ((i = 0; i < $gpu_num; i++)); do
 done
 ```
 
-### Evaluating pass@k
+### Evaluating Pass@k
 `cd humaneval` then run the evaluation via `bash run_eval.sh`.
 
 ```bash
@@ -139,8 +163,8 @@ python process_preds.py --path ${output_path} --out_path ${output_path}.jsonl
 evaluate_functional_correctness ${output_path}.jsonl
 ```
 
-We also released the model predictions for our [InstructCodeT5+ 16B](https://huggingface.co/Salesforce/instructcodet5p-16b) at `humaneval/instructcodet5p-16b_T0.2_N200.jsonl` for your reference. 
-It can reproduce the results of `36.1% Pass@1` with the following command. Note that this result is slightly different from the reported `35.0% Pass@1` in the paper due to the randomness of the sampling process.
+Note that the reproduced results might be slightly different from the reported ones due to the randomness of the sampling process. We also released the model predictions for our [InstructCodeT5+ 16B](https://huggingface.co/Salesforce/instructcodet5p-16b) at `humaneval/instructcodet5p-16b_T0.2_N200.jsonl` for your reference. 
+It can reproduce the results of `36.1% Pass@1` with the following command. 
 
 ```bash
 evaluate_functional_correctness humaneval/instructcodet5p-16b_T0.2_N200.jsonl
