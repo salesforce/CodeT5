@@ -204,8 +204,8 @@ evaluate_functional_correctness humaneval/instructcodet5p-16b_T0.2_N200.jsonl
 ```
 
 ## Text-to-Code Retrieval
-* Download and preprocess 3 text-to-code retrieval datasets following the instructions in this [repo](https://github.com/microsoft/CodeBERT/tree/master/UniXcoder/downstream-tasks/code-search#data-download).
-* `cd code_retrieval` then run the evaluation of our CodeT5+ 110M embedding model via `bash run_retrieval.sh`. 
+* Download and preprocess 3 text-to-code retrieval datasets (CSN in 6 PLs, AdvTest, cosqa) following the instructions in this [repo](https://github.com/microsoft/CodeBERT/tree/master/UniXcoder/downstream-tasks/code-search#data-download).
+* `cd code_retrieval` then run the evaluation of our [CodeT5+ 110M embedding](https://huggingface.co/Salesforce/codet5p-110m-embedding) model via `bash run_retrieval.sh`. 
 
 ```bash
 # LANG choices: ruby javascript go python java php AdvTest cosqa
