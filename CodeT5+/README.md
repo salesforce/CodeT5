@@ -37,6 +37,7 @@ Note that as this model utilizes instruction tuning data curated using OpenAI AP
 
 We release the following CodeT5+ models at Huggingface:
 * CodeT5+ `110M` embedding model: [codet5p-110m-embedding](https://huggingface.co/Salesforce/codet5p-110m-embedding).
+* CodeT5+ `220M` bimodal model: [codet5p-220m-bimodal](https://huggingface.co/Salesforce/codet5p-220m-bimodal).
 * CodeT5+ `220M` and `770M`: [codet5p-220m](https://huggingface.co/Salesforce/codet5p-220m) and [codet5p-770m](https://huggingface.co/Salesforce/codet5p-770m).
 * CodeT5+ `220M` and `770M` that are further tuned on Python subset: [codet5p-220m-py](https://huggingface.co/Salesforce/codet5p-220m-py) and [codet5p-770m-py](https://huggingface.co/Salesforce/codet5p-770m-py).
 * CodeT5+ `2B`, `6B`, `16B`: [codet5p-2b](https://huggingface.co/Salesforce/codet5p-2b), [codet5p-6b](https://huggingface.co/Salesforce/codet5p-6b), and [codet5p-16b](https://huggingface.co/Salesforce/codet5p-16b).
@@ -224,17 +225,38 @@ python eval_contrast_retrieval.py --model_name $MODEL_NAME --lang $LANG --output
   --data_dir $DATA_DIR --max_text_len $TEXT_LEN --max_code_len $CODE_LEN --batch_size $BS
 ```
 
+
+* Run the evaluation of [CodeT5+ 220M bimodal](https://huggingface.co/Salesforce/codet5p-220m-bimodal) model via `bash run_match_retrieval.sh`. It can further boost the performance by activating the matching decoder to rerank the `top_k` candidates from the embedding model's contrastive retrieval. You can change the `top_k` value to control the number of candidates to rerank.
+
+```bash
+# LANG choices: ruby javascript go python java php AdvTest cosqa
+LANG=ruby
+BS=256
+CODE_LEN=360
+TEXT_LEN=64
+TOPK=10
+MODEL_NAME=Salesforce/codet5p-220m-bimodal
+DATA_DIR=/path/to/data
+
+TRG_DIR=saved_models/${LANG}/codet5p_220m_bimodal_TL${TEXT_LEN}_CL${CODE_LEN}_top${TOPK}
+mkdir -p $TRG_DIR
+echo 'Target dir: '$TRG_DIR
+
+python eval_match_retrieval.py --model_name $MODEL_NAME --lang $LANG --output_dir $TRG_DIR \
+  --data_dir $DATA_DIR --max_text_len $TEXT_LEN --max_code_len $CODE_LEN --batch_size $BS --top_k $TOPK
+```
+
 ### Zero-shot Evaluation Results
 
-The above running script can reproduce the results as shown in the `CodeT5+ 110M embedding` row of the following table. We will release the `CodeT5+ 220M matching` model soon, which shares the same encoder as the embedding model. It achieves better performance than the embedding model via leveraging the fine-grained alignment between text and code through the matching decoder.
+The above running scripts can reproduce the results as shown in the `CodeT5+ 110M embedding` and `CodeT5+ 220M matching` row of the following table. The results show that [CodeT5+ 220M bimodal](https://huggingface.co/Salesforce/codet5p-220m-bimodal) model achieves better performance than the embedding model via leveraging the fine-grained alignment between text and code through the matching decoder.
 For UniXcoder's zero-shot results, we reproduce it following its official instructions [here](https://github.com/microsoft/CodeBERT/tree/master/UniXcoder/downstream-tasks/code-search#zero-shot-setting).
 
 
 | Model                  | Ruby  | JavaScript | Go    | Python | Java  | PHP   | CSN_Avg | CosQA | AdvTest |
-| ---------------------- | ----- | ---------- | ----- | ------ | ----- | ----- | ------- | ----- |--------|
-| UniXcoder 125M         | 57.6  | 44.2       | 64.8  | 44.7   | 46.6  | 37.3  | 49.20   | 43.1  | 29.9   |
-| CodeT5+ 110M embedding | 74.51 | 69.07      | 90.69 | 71.55  | 71.82 | 67.72 | 74.23   | 39.57 | 40.49  |
-| CodeT5+ 220M matching  | 75.94 | 69.85      | 91.32 | 73.97  | 74.7  | 68.28 | 75.68   | 51.54 | 42.03  |
+| ---------------------- | ----- | ---------- | ----- | ------ | ----- | ----- | ------- | ----- | ------- |
+| UniXcoder 125M         | 57.6  | 44.2       | 64.8  | 44.7   | 46.6  | 37.3  | 49.20   | 43.1  | 29.9    |
+| CodeT5+ 110M embedding | 74.51 | 69.07      | 90.69 | 71.55  | 71.82 | 67.72 | 74.23   | 39.57 | 40.49   |
+| CodeT5+ 220M matching  | 76.02 | 70.26      | 91.24 | 73.6   | 74.27 | 68.35 | 75.62   | 47.49 | 42.16   |
 
 * Note that the reported zero-shot results of CodeT5+ are different from the ones in the paper which are task-specific fine-tuned results.
 
