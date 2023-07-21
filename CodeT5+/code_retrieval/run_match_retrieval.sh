@@ -4,7 +4,7 @@ LANG=ruby
 BS=256
 CODE_LEN=360
 TEXT_LEN=64
-TOPK=10
+TOPK=32
 MODEL_NAME=Salesforce/codet5p-220m-bimodal
 DATA_DIR=/path/to/data
 

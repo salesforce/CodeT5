@@ -36,8 +36,8 @@ InstructCodeT5+ 16B is our instruction-tuned model from CodeT5+ 16B.
 Note that as this model utilizes instruction tuning data curated using OpenAI API, the checkpoint of InstructCodeT5+ 16B is licensed for research and **non-commercial** use only.
 
 We release the following CodeT5+ models at Huggingface:
-* CodeT5+ `110M` embedding model: [codet5p-110m-embedding](https://huggingface.co/Salesforce/codet5p-110m-embedding).
-* CodeT5+ `220M` bimodal model: [codet5p-220m-bimodal](https://huggingface.co/Salesforce/codet5p-220m-bimodal).
+* CodeT5+ `110M` embedding model: [codet5p-110m-embedding](https://huggingface.co/Salesforce/codet5p-110m-embedding).🔥
+* CodeT5+ `220M` bimodal model: [codet5p-220m-bimodal](https://huggingface.co/Salesforce/codet5p-220m-bimodal).🔥
 * CodeT5+ `220M` and `770M`: [codet5p-220m](https://huggingface.co/Salesforce/codet5p-220m) and [codet5p-770m](https://huggingface.co/Salesforce/codet5p-770m).
 * CodeT5+ `220M` and `770M` that are further tuned on Python subset: [codet5p-220m-py](https://huggingface.co/Salesforce/codet5p-220m-py) and [codet5p-770m-py](https://huggingface.co/Salesforce/codet5p-770m-py).
 * CodeT5+ `2B`, `6B`, `16B`: [codet5p-2b](https://huggingface.co/Salesforce/codet5p-2b), [codet5p-6b](https://huggingface.co/Salesforce/codet5p-6b), and [codet5p-16b](https://huggingface.co/Salesforce/codet5p-16b).
@@ -72,7 +72,7 @@ outputs = model.generate(**encoding, max_length=15)
 print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 ```
 
-### CodeT5+ embedding model 🔥
+### CodeT5+ embedding model
 Apart from the generative models, we also release the [CodeT5+ 110M embedding](https://huggingface.co/Salesforce/codet5p-110m-embedding) model that can be used to extract code embeddings. This checkpoint contains an encoder of the CodeT5+ 220M model that are pretrained from two stages on both unimodal and bimodal data, as well as a linear projection layer to map the encoder output to a 256-dimensional vector. 
 
 ```python
@@ -90,10 +90,46 @@ print(f'Dimension of the embedding: {embedding.size()[0]}, with norm={embedding.
 # Dimension of the embedding: 256, with norm=1.0
 ```
 
+### CodeT5+ bimodal model 
+We release a [CodeT5+ 220M bimodal model](https://huggingface.co/Salesforce/codet5p-220m-bimodal) that is pretrained through two stages on both unimodal and bimodal data. This model can be used for code summarization and code retrieval in a zero-shot manner, as well as for code generation with fine-tuning. This model's encoder and projection layer share the same weights with the [CodeT5+ 110M embedding](https://huggingface.co/Salesforce/codet5p-110m-embedding) model. 
+For code retrieval tasks, we can use its encoder to extract code embeddings and compute the cosine similarity between the query text and the code snippet as the embedding model, or additionally use its decoder in a text-code matching mode for optimizing the top candidates. See the [text-to-code retrieval evaluation](#text-to-code-retrieval) for more details.
+
+Below is an example of using the model for code summarization.
+
+```python
+from transformers import AutoModel, AutoTokenizer
+
+checkpoint = "Salesforce/codet5p-220m-bimodal"
+device = "cuda"  # for GPU usage or "cpu" for CPU usage
+
+tokenizer = AutoTokenizer.from_pretrained(checkpoint, trust_remote_code=True)
+model = AutoModel.from_pretrained(checkpoint, trust_remote_code=True).to(device)
+
+code = """def svg_to_image(string, size=None):
+    if isinstance(string, unicode):
+        string = string.encode('utf-8')
+        renderer = QtSvg.QSvgRenderer(QtCore.QByteArray(string))
+    if not renderer.isValid():
+        raise ValueError('Invalid SVG data.')
+    if size is None:
+        size = renderer.defaultSize()
+        image = QtGui.QImage(size, QtGui.QImage.Format_ARGB32)
+        painter = QtGui.QPainter(image)
+        renderer.render(painter)
+    return image"""
+
+input_ids = tokenizer(code, return_tensors="pt").input_ids.to(device)
+
+generated_ids = model.generate(input_ids, max_length=20)
+print(tokenizer.decode(generated_ids[0], skip_special_tokens=True))
+# Convert a string of SVG data to an image.
+```
+
 # Instruction Tuning to Align with Natural Language Instructions
 
 We explore instruction tuning to align CodeT5+ with natural language instructions following [Code Alpaca](https://github.com/sahil280114/codealpaca). First download the instruction data `code_alpaca_20k.json` from [here](https://github.com/sahil280114/codealpaca/tree/master/data). 
 Then, you can run the following command to finetune CodeT5+ 16B on the instruction data.
+You can change the `--instruct-data-path` to finetune on other instruction data or any downstream data.
 
 ```bash
 MODEL=Salesforce/codet5p-16b
@@ -234,7 +270,7 @@ LANG=ruby
 BS=256
 CODE_LEN=360
 TEXT_LEN=64
-TOPK=10
+TOPK=32
 MODEL_NAME=Salesforce/codet5p-220m-bimodal
 DATA_DIR=/path/to/data
 
@@ -246,19 +282,19 @@ python eval_match_retrieval.py --model_name $MODEL_NAME --lang $LANG --output_di
   --data_dir $DATA_DIR --max_text_len $TEXT_LEN --max_code_len $CODE_LEN --batch_size $BS --top_k $TOPK
 ```
 
-### Zero-shot Evaluation Results
+### Evaluation Results
 
 The above running scripts can reproduce the results as shown in the `CodeT5+ 110M embedding` and `CodeT5+ 220M matching` row of the following table. The results show that [CodeT5+ 220M bimodal](https://huggingface.co/Salesforce/codet5p-220m-bimodal) model achieves better performance than the embedding model via leveraging the fine-grained alignment between text and code through the matching decoder.
 For UniXcoder's zero-shot results, we reproduce it following its official instructions [here](https://github.com/microsoft/CodeBERT/tree/master/UniXcoder/downstream-tasks/code-search#zero-shot-setting).
 
 
-| Model                  | Ruby  | JavaScript | Go    | Python | Java  | PHP   | CSN_Avg | CosQA | AdvTest |
-| ---------------------- | ----- | ---------- | ----- | ------ | ----- | ----- | ------- | ----- | ------- |
-| UniXcoder 125M         | 57.6  | 44.2       | 64.8  | 44.7   | 46.6  | 37.3  | 49.20   | 43.1  | 29.9    |
-| CodeT5+ 110M embedding | 74.51 | 69.07      | 90.69 | 71.55  | 71.82 | 67.72 | 74.23   | 39.57 | 40.49   |
-| CodeT5+ 220M matching  | 76.02 | 70.26      | 91.24 | 73.6   | 74.27 | 68.35 | 75.62   | 47.49 | 42.16   |
+| Model                          | Ruby  | JavaScript | Go    | Python | Java  | PHP   | CSN_Avg | CosQA | AdvTest |
+| ------------------------------ | ----- | ---------- | ----- | ------ | ----- | ----- | ------- | ----- | ------- |
+| UniXcoder 125M                 | 57.6  | 44.2       | 64.8  | 44.7   | 46.6  | 37.3  | 49.20   | 43.1  | 29.9    |
+| CodeT5+ 110M embedding         | 74.51 | 69.07      | 90.69 | 71.55  | 71.82 | 67.72 | 74.23   | 39.57 | 40.49   |
+| CodeT5+ 220M matching (top 32) | 76.04 | 70.17      | 91.37 | 74.17  | 74.76 | 68.6  | 75.85   | 51.51 | 42.9    |
 
-* Note that the reported zero-shot results of CodeT5+ are different from the ones in the paper which are task-specific fine-tuned results.
+* Note that the reported multi-task results of CodeT5+ are different from the ones in the paper which are task-specific fine-tuned results.
 
 # Citation
 
