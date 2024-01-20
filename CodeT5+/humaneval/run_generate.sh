@@ -1,21 +1,34 @@
-model=instructcodet5p-16b
-temp=0.2
-max_len=800
-pred_num=200
-num_seqs_per_iter=2 # 25 for 350M and 770M, 10 for 2B, 8 for 6B, 2 for 16B on A100-40G
+#!/bin/bash
+set -euox pipefail
 
-output_path=preds/${model}_T${temp}_N${pred_num}
+# ENV vars
+# model
+# temp
+# top_p
+# max_len
+# n_samples
+# gpu_num
+
+model=instructcodet5p-16b
+temp=${temp:-0.8}
+top_p=${top_p:-0.95}
+max_len=${max_len:-512}
+pred_num=${n_samples:-200}
+num_seqs_per_iter=2 # 25 for 350M and 770M, 10 for 2B, 8 for 6B, 2 for 16B on A100-40G
+gpu_num=${gpu_num:-1}
+
+output_path=preds/${model}_T${temp}_P${top_p}_N${pred_num}
 
 mkdir -p ${output_path}
 echo 'Output path: '$output_path
 echo 'Model to eval: '$model
 
 # 164 problems, 21 per GPU if GPU=8
+batch_size=164
 index=0
-gpu_num=8
 for ((i = 0; i < $gpu_num; i++)); do
-  start_index=$((i * 21))
-  end_index=$(((i + 1) * 21))
+  start_index=$((i * $batch_size))
+  end_index=$(((i + 1) * $batch_size))
 
   gpu=$((i))
   echo 'Running process #' ${i} 'from' $start_index 'to' $end_index 'on GPU' ${gpu}

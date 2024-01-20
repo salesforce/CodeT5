@@ -42,6 +42,7 @@ def main():
     parser.add_argument('--start_index', type=int, default=0, help="")
     parser.add_argument('--end_index', type=int, default=164, help="")
     parser.add_argument('--temperature', type=float, default=0.8, help="")
+    parser.add_argument('--top_p', type=float, default=0.95, help="")
     parser.add_argument('--N', type=int, default=200, help="")
     parser.add_argument('--max_len', type=int, default=600, help="")
     parser.add_argument('--decoding_style', type=str, default='sampling', help="")
@@ -117,7 +118,7 @@ def main():
                                                     num_return_sequences=args.num_seqs_per_iter,
                                                     decoder_start_token_id=tokenizer.pad_token_id,
                                                     eos_token_id=tokenizer.eos_token_id,
-                                                    top_p=0.95)
+                                                    top_p=args.top_p)
                     else:
                         gen_tokens = model.generate(**encoding,
                                                     do_sample=True,
@@ -125,7 +126,7 @@ def main():
                                                     max_length=args.max_len,
                                                     num_return_sequences=args.num_seqs_per_iter,
                                                     eos_token_id=tokenizer.eos_token_id,
-                                                    top_p=0.95)
+                                                    top_p=args.top_p)
 
             if gen_tokens is not None:
                 if prompt_to_decoder:
