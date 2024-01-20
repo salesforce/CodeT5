@@ -37,7 +37,10 @@ Create a Python script for this problem:
 def main():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--model', type=str, default='Salesforce/instructcodet5p-16b', help="")
+    parser.add_argument('--model', type=str,
+                        default='Salesforce/instructcodet5p-16b', help="")
+    parser.add_argument('--input_path', type=str, default=None,
+                        help="path to HumanEval or HumanEval-X jsonl.gz file. If not specified, use standard HumanEval.jsonl.gz")
     parser.add_argument('--output_path', type=str, help="")
     parser.add_argument('--start_index', type=int, default=0, help="")
     parser.add_argument('--end_index', type=int, default=164, help="")
@@ -45,7 +48,8 @@ def main():
     parser.add_argument('--top_p', type=float, default=0.95, help="")
     parser.add_argument('--N', type=int, default=200, help="")
     parser.add_argument('--max_len', type=int, default=600, help="")
-    parser.add_argument('--decoding_style', type=str, default='sampling', help="")
+    parser.add_argument('--decoding_style', type=str,
+                        default='sampling', help="")
     parser.add_argument('--num_seqs_per_iter', type=int, default=50, help='')
     parser.add_argument('--overwrite', action='store_true', help='')
 
@@ -57,7 +61,8 @@ def main():
     STOP_SEQS = ['\nclass', '\ndef', '\n#', '\nif', '\nprint']
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    problems = read_problems()
+    problems = read_problems(args.input_path)
+    print(f'{len(problems)} problems from \'{os.path.abspath(args.input_path)}\'')
 
     task_ids = sorted(problems.keys())[args.start_index: args.end_index]
     prompts = [problems[task_id]['prompt'] for task_id in task_ids]
@@ -74,11 +79,13 @@ def main():
     model.to(device)
 
     # for larger LLMs such as 2B, 6B, and 16B, we need to pass the text prompt to the decoder
-    prompt_to_decoder = True if any([size in args.model for size in ['2b', '6b', '16b']]) else False
+    prompt_to_decoder = True if any(
+        [size in args.model for size in ['2b', '6b', '16b']]) else False
 
     print(f"Loaded {args.model}.")
     for i in tqdm(range(num_samples), ncols=0, total=num_samples):
-        output_file = args.output_path + '/{}.jsonl'.format(args.start_index + i)
+        output_file = args.output_path + \
+            '/{}.jsonl'.format(args.start_index + i)
 
         if os.path.exists(output_file) and not args.overwrite:
             print(f'Skip {output_file} as it already exists')
@@ -87,7 +94,8 @@ def main():
         prompt = prompts[i].replace('    ', '\t')
         if args.model == 'Salesforce/instructcodet5p-16b':
             prompt_batch = [INSTRUCTION.format(extract_text(prompt))]
-            prompt_batch_decoder = [INSTRUCTION.format(extract_text(prompt)) + prompt]
+            prompt_batch_decoder = [INSTRUCTION.format(
+                extract_text(prompt)) + prompt]
         else:
             prompt_batch = [prompt]
             prompt_batch_decoder = [prompt]
@@ -96,7 +104,8 @@ def main():
 
         completion_seqs = []
 
-        encoding = tokenizer(prompt_batch, return_tensors="pt", truncation=True, max_length=args.max_len).to(device)
+        encoding = tokenizer(prompt_batch, return_tensors="pt",
+                             truncation=True, max_length=args.max_len).to(device)
         encoding_decoder = tokenizer(prompt_batch_decoder, return_tensors="pt", truncation=True,
                                      max_length=args.max_len).to(device)
 
@@ -130,8 +139,10 @@ def main():
 
             if gen_tokens is not None:
                 if prompt_to_decoder:
-                    gen_tokens = gen_tokens[:, encoding_decoder['input_ids'].shape[-1]:]
-                gen_seqs = tokenizer.batch_decode(gen_tokens, skip_special_tokens=True)
+                    gen_tokens = gen_tokens[:,
+                                            encoding_decoder['input_ids'].shape[-1]:]
+                gen_seqs = tokenizer.batch_decode(
+                    gen_tokens, skip_special_tokens=True)
             else:
                 gen_seqs = None
 

@@ -195,14 +195,25 @@ Please follow the instructions below to reproduce the results.
 ### Generating programs from CodeT5+ models
 `cd humaneval` then run the inference via `bash run_generate.sh`. 
 You can select the model to generate from by changing the `model` variable in the script.
-Following the original setting in the HumanEval paper, we generate 200 programs (`pred_num=200`) for each problem and employs nucleus sampling with different temperature `T` for computing `Pass@k` (`T=0.2,0.6,0.8` for `k=1,10,100` respectively).
+Following the original setting in the HumanEval paper, we generate 200 programs (`pred_num=200`) for each problem and employs nucleus sampling with different temperature `T` for computing `Pass@k` (`T=0.2,0.6,0.8` for `k=1,10,100` respectively). `input_path` is the path to the HumanEval-**formatted** dataset, it's optional and set to HumanEval.jsonl.gz by default.
 The generated programs will be saved in `preds/${model}_T${T}_N${pred_num}`.
 
 Example:
 ```bash
 cd humaneval
+
+wget https://github.com/THUDM/CodeGeeX/blob/main/codegeex/benchmark/humaneval-x/python/data/humaneval_python.jsonl.gz
+
 chmod +x ./run_generate.sh
-model=instructcodet5p-16b temp=0.8 top_p=0.95 max_len=512 n_samples=200 gpu_num=1 ./run_generate.sh
+
+model=instructcodet5p-16b \
+input_path="./humaneval_python.jsonl.gz" \
+temp=0.8 \
+top_p=0.95 \
+max_len=512 \
+n_samples=200 \
+gpu_num=1 \
+./run_generate.sh
 ```
 
 ```bash
