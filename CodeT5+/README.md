@@ -19,14 +19,23 @@ Furthermore, we explore instruction tuning to align the model with natural langu
 
 ## Table of Contents
 
-1. [Released Models](#released-models)
-2. [How to Use?](#how-to-use)
-3. [Instruction Tuning to Align with Natural Language Instructions](#instruction-tuning-to-align-with-natural-language-instructions)
-4. [How to Finetune Using Your Own Data?](#how-to-finetune-using-your-own-data)
-5. [Reproduce the Results](#reproduce-the-results)
-   1. [HumanEval](#humaneval)
-   2. [Text-to-Code Retrieval](#text-to-code-retrieval)
-6. [Citation](#citation)
+- [CodeT5+](#codet5)
+- [What is this about?](#what-is-this-about)
+  - [Table of Contents](#table-of-contents)
+- [Released Models](#released-models)
+- [How to Use?](#how-to-use)
+    - [CodeT5+ embedding model](#codet5-embedding-model)
+    - [CodeT5+ bimodal model](#codet5-bimodal-model)
+- [Instruction Tuning to Align with Natural Language Instructions](#instruction-tuning-to-align-with-natural-language-instructions)
+- [How to Finetune Using Your Own Data?](#how-to-finetune-using-your-own-data)
+- [Reproduce the Results](#reproduce-the-results)
+  - [HumanEval](#humaneval)
+    - [Installation](#installation)
+    - [Generating programs from CodeT5+ models](#generating-programs-from-codet5-models)
+    - [Evaluating Pass@k](#evaluating-passk)
+  - [Text-to-Code Retrieval](#text-to-code-retrieval)
+    - [Evaluation Results](#evaluation-results)
+- [Citation](#citation)
 
 
 # Released Models
@@ -155,7 +164,7 @@ This script naturally supports both single-GPU and multi-GPU training. If you ha
 Our CodeT5+ models achieve very strong results on HumanEval benchmark in zero-shot setting. We follow common practices to employ nucleus sampling with different temperature `T` for computing `Pass@k` (`T=0.2,0.6,0.8` for `k=1,10,100` respectively).
 
 | Model                   | Pass@1   | Pass@10  | Pass@100 |
-|-------------------------|----------|----------|----------|
+| ----------------------- | -------- | -------- | -------- |
 | LLaMA 7B                | 10.5     | -        | 36.5     |
 | LaMDA  137B             | 14.0     | -        | 47.3     |
 | InCoder 6B              | 15.2     | 27.8     | 47.0     |
@@ -188,6 +197,13 @@ Please follow the instructions below to reproduce the results.
 You can select the model to generate from by changing the `model` variable in the script.
 Following the original setting in the HumanEval paper, we generate 200 programs (`pred_num=200`) for each problem and employs nucleus sampling with different temperature `T` for computing `Pass@k` (`T=0.2,0.6,0.8` for `k=1,10,100` respectively).
 The generated programs will be saved in `preds/${model}_T${T}_N${pred_num}`.
+
+Example:
+```bash
+cd humaneval
+chmod +x ./run_generate.sh
+model=instructcodet5p-16b temp=0.8 top_p=0.95 max_len=512 n_samples=200 gpu_num=1 ./run_generate.sh
+```
 
 ```bash
 model=instructcodet5p-16b
