@@ -201,10 +201,11 @@ The generated programs will be saved in `preds/${model}_T${T}_N${pred_num}`.
 Example:
 ```bash
 cd humaneval
+chmod +x ./run_generate.sh
 
 wget https://github.com/THUDM/CodeGeeX/blob/main/codegeex/benchmark/humaneval-x/python/data/humaneval_python.jsonl.gz
 
-chmod +x ./run_generate.sh
+wget https://github.com/THUDM/CodeGeeX/blob/main/codegeex/benchmark/humaneval-x/java/data/humaneval_java.jsonl.gz
 
 model=instructcodet5p-16b \
 input_path="./humaneval_python.jsonl.gz" \
