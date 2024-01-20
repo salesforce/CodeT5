@@ -33,13 +33,19 @@ Create a Python script for this problem:
 
 ### Response:"""
 
+dict_precisions = {
+    "fp32": torch.float32,
+    "fp16": torch.float16,
+    "bf16": torch.bfloat16,
+}
+
 
 def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--model', type=str,
                         default='Salesforce/instructcodet5p-16b', help="")
-    parser.add_argument('--input_path', type=str, default=None,
+    parser.add_argument('--input_path', type=str, default="",
                         help="path to HumanEval or HumanEval-X jsonl.gz file. If not specified, use standard HumanEval.jsonl.gz")
     parser.add_argument('--output_path', type=str, help="")
     parser.add_argument('--start_index', type=int, default=0, help="")
@@ -48,6 +54,8 @@ def main():
     parser.add_argument('--top_p', type=float, default=0.95, help="")
     parser.add_argument('--N', type=int, default=200, help="")
     parser.add_argument('--max_len', type=int, default=600, help="")
+    parser.add_argument('--precision', type=str,
+                        default="bf16", help="one of fp32, fp16, bf16")
     parser.add_argument('--decoding_style', type=str,
                         default='sampling', help="")
     parser.add_argument('--num_seqs_per_iter', type=int, default=50, help='')
@@ -61,7 +69,8 @@ def main():
     STOP_SEQS = ['\nclass', '\ndef', '\n#', '\nif', '\nprint']
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    problems = read_problems(args.input_path)
+    problems = read_problems(
+        args.input_path) if len(args.input_path) > 0 else read_problems()
     print(f'{len(problems)} problems from \'{os.path.abspath(args.input_path)}\'')
 
     task_ids = sorted(problems.keys())[args.start_index: args.end_index]
@@ -73,7 +82,7 @@ def main():
 
     model = AutoModelForSeq2SeqLM.from_pretrained(args.model,
                                                   trust_remote_code=True,  # False for 220m and 770m models
-                                                  torch_dtype=torch.float16,
+                                                  torch_dtype=dict_precisions[args.precision],
                                                   low_cpu_mem_usage=True)
     model.eval()
     model.to(device)
