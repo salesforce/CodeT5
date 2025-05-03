@@ -1,0 +1,22 @@
+# ----------  PyTorch CUDA‑12.1 wheels  -----------
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch==2.2.2+cu121
+torchvision==0.17.2+cu121
+torchaudio==2.2.2+cu121
+              
+# ----------  Core utilities  ---------------------
+numpy==1.24.4
+tqdm==4.67.1
+numpy==1.24.4
+
+# ----------  Hugging‑Face ecosystem --------------
+transformers==4.36.2
+accelerate==0.21.0
+datasets==3.5.1
+
+# ----------  DeepSpeed  --------------------------
+deepspeed==0.16.7
+
+# ----------  Logging / evaluation  --------------
+tensorboardX==2.6.2.2
+human_eval==1.0.3
