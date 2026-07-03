@@ -149,6 +149,18 @@ To finetune on your own data, you just need to prepare your customized data in t
 Besides, you can specify `--load` to select the specific CodeT5+ model (e.g., `Salesforce/codet5p-220m`) to finetune from. To tune the hyper-parameter setting that suit your task the best, you can customize other finetuning arguments such as  `--epochs`, `--lr`, `--lr-warmup-steps`, `--max-source-len`, `--max-target-len`, `--batch-size-per-replica`, `--grad-acc-steps`, etc.
 This script naturally supports both single-GPU and multi-GPU training. If you have limited GPU memory issue and want to improve the training throughput, please consider to specify `--fp16` to enable mixed-precision training and use [DeepSpeed](https://github.com/microsoft/DeepSpeed) for further optimization by passing a deedspeed config file to `--deepspeed` (see [here](https://huggingface.co/docs/transformers/main_classes/deepspeed#zero2-example) for an example config file).
 
+We also provide an example finetuning script [tune_codet5p_clone_detection.py](https://github.com/salesforce/CodeT5/blob/main/CodeT5%2B/tune_codet5p_clone_detection.py) for CodeT5+ models on Clone-Detection task, which is modified from [unixcoder](https://github.com/microsoft/CodeBERT/tree/master/UniXcoder/downstream-tasks/clone-detection/POJ-104).
+You can run `tune_codet5p_clone_detection.py` to finetune codet5p-110m-embedding model on POJ104. You can run the script as the following:
+```bash
+python3.10 tune_codet5p_clone_detection.py.py --output_dir saved_models \
+                  --train_data_file /path/to/POJ-104/dataset/train.jsonl \
+                  --eval_data_file /path/to/POJ-104/dataset/valid.jsonl \
+                  --do_train --num_train_epochs 2 \
+                  --block_size 1024 --train_batch_size 8 \
+                  --eval_batch_size 8 --learning_rate 1e-5 \
+                  --max_grad_norm 1.0 --seed 42
+```
+
 # Reproduce the Results
 
 ## HumanEval
