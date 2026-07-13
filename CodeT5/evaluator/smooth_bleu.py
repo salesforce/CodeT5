@@ -20,6 +20,7 @@ The reason for breaking the BLEU computation into three phases cook_refs(), cook
 import sys, math, re, xml.sax.saxutils
 import subprocess
 import os
+import numpy as np
 
 # Added to bypass NIST-style pre-processing of hyp and ref files -- wade
 nonorm = 0
@@ -194,7 +195,7 @@ def bleuFromMaps(m1, m2):
     for key in m1:
         if key in m2:
             bl = bleu(m1[key], m2[key][0])
-            score = [score[i] + bl[i] for i in range(0, len(bl))]
+            score = np.add(bl,score)
             num += 1
     return [s * 100.0 / num for s in score]
 
